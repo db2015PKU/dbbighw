@@ -1,3 +1,4 @@
+#encoding:utf8
 """
 Django settings for lookmovie project.
 
@@ -25,7 +26,7 @@ SECRET_KEY = '2v$pf0sz0va%8vuo3u-h&&$*(bv8a*x*_7^^!-(poa+c4kp=v*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -76,9 +77,13 @@ WSGI_APPLICATION = 'lookmovie.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'mycinema',    #你的数据库名称
+        'USER': 'root',   #你的数据库用户名
+        'PASSWORD': '', #你的数据库密码
+        'HOST': '', #你的数据库主机，留空默认为localhost
+        'PORT': '3306', #你的数据库端口
+    } 
 }
 
 
