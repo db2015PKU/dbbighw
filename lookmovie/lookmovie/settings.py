@@ -77,12 +77,8 @@ WSGI_APPLICATION = 'lookmovie.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'mycinema',    #你的数据库名称
-        'USER': 'root',   #你的数据库用户名
-        'PASSWORD': '', #你的数据库密码
-        'HOST': '', #你的数据库主机，留空默认为localhost
-        'PORT': '3306', #你的数据库端口
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME':'mycinema.db'
     } 
 }
 

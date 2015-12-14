@@ -26,7 +26,8 @@ urlpatterns = [
     url(r'^search/cinema/max_available_seat/by_distinct/','websiteapp.views.search_cinema_max_available_seat_by_district',name='search_cinema_max_available_seat_by_district'),
     url(r'^search/cinema/greater_avg/by_distinct/','websiteapp.views.search_cinema_greater_avg_seat_by_district',name='search_cinema_greater_avg_seat_by_district'),
     url(r'^search/movie/total/','websiteapp.views.search_movie_total',name='search_movie_total'),
-    url(r'^ticket/','websiteapp.views.ticket',name='ticket')
+    url(r'^ticket/','websiteapp.views.ticket',name='ticket'),
+    url(r'^create_db','websiteapp.views.create_db',name='create_db')
     
     
 ]

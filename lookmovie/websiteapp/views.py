@@ -6,6 +6,7 @@ from django.http import Http404
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+import sqlite3
 import json
 
 # Create your views here.
@@ -141,6 +142,124 @@ def ticket(request):
 }
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-
+def create_db(request):
+    cx = sqlite3.connect("mycinema.db")
+    cu=cx.cursor()
+    sql_str='''
+drop table if exists cinema;
+CREATE TABLE cinema (
+cinema_name VARCHAR(40) NOT NULL,
+district VARCHAR(20) NOT NULL,
+road VARCHAR(20) NOT NULL,
+busStation VARCHAR(20) NOT NULL,
+phone VARCHAR(50) NOT NULL,
+businessHoursBegin TIME NOT NULL,
+businessHoursEnd TIME NOT NULL,
+estimate NUMERIC(2 , 1 ) CHECK (estimate > 0 AND estimate < 10),
+PRIMARY KEY (cinema_name)
+);
+drop table if exists room;
+CREATE TABLE room (
+room_no INT(10) NOT NULL,
+seatx_max INT(10) NOT NULL,
+seaty_max INT(10) NOT NULL,
+PRIMARY KEY (room_no)
+);
+drop table if exists room_of_cinema;
+CREATE TABLE room_of_cinema (
+cinema_name VARCHAR(40) NOT NULL,
+room_no INT(10) NOT NULL,
+PRIMARY KEY (cinema_name , room_no),
+constraint cinema_name1 FOREIGN KEY (cinema_name)
+REFERENCES cinema (cinema_name)
+on delete cascade,
+constraint room_no1 foreign key (room_no)
+REFERENCES room(room_no)
+on delete cascade
+);
+drop table if exists movie;
+CREATE TABLE movie (
+movie_id INT(30) NOT NULL,
+movie_name VARCHAR(40) NOT NULL,
+show_date DATE NOT NULL,
+show_time TIME NOT NULL,
+runtime INT(20) NOT NULL,
+director VARCHAR(40) NOT NULL,
+actors VARCHAR(40) NOT NULL,
+movie_type VARCHAR(40) CHECK (movie_type IN ('literary' , 'horror',
+'action',
+'comedy',
+'pornographic',
+'thriller')),
+movie_language VARCHAR(20) CHECK (movie_language IN ('Chinese' , 'English')),
+price NUMERIC(4 , 2 ) NOT NULL,
+PRIMARY KEY (movie_id)
+);
+drop table if exists movies_of_cinema;
+create table movies_of_cinema
+(
+cinema_name VARCHAR(40) NOT NULL,
+movie_id INT(30) NOT NULL,
+primary key(cinema_name, movie_id)
+);
+drop table if exists userAccount;
+CREATE TABLE userAccount (
+user_email VARCHAR(40) NOT NULL,
+user_name VARCHAR(40) NOT NULL,
+user_password VARCHAR(30) NOT NULL,
+user_phone VARCHAR(20) NOT NULL,
+user_permissions VARCHAR(15) CHECK (user_permissions IN ('admin' , 'normal')),
+PRIMARY KEY (user_email)
+);
+drop table if exists ticket;
+CREATE TABLE ticket (
+ticket_id INT(30) NOT NULL,
+movie_id INT(30) NOT NULL,
+cinema_name VARCHAR(40) NOT NULL,
+show_date DATE NOT NULL,
+show_time TIME NOT NULL,
+room_no INT(10) NOT NULL,
+seatx INT(10) NOT NULL,
+seaty INT(10) NOT NULL,
+PRIMARY KEY (ticket_id),
+constraint movie_id1 FOREIGN KEY (movie_id)
+REFERENCES movie(movie_id),
+FOREIGN KEY (cinema_name , room_no)
+REFERENCES room_of_cinema(cinema_name, room_no)
+);
+drop table if exists movieShow;
+CREATE TABLE movieShow (
+cinema_name VARCHAR(40) NOT NULL,
+movie_id INT(30) NOT NULL,
+show_date DATE NOT NULL,
+show_time TIME NOT NULL,
+room_no INT(10) NOT NULL,
+price NUMERIC(4 , 2 ) NOT NULL,
+PRIMARY KEY (cinema_name , movie_id , show_date , show_time , room_no),
+constraint cinema_name2 FOREIGN KEY (cinema_name)
+REFERENCES cinema(cinema_name),
+constraint movie_id2 FOREIGN KEY (movie_id)
+REFERENCES movie(movie_id),
+constraint roon_no2 FOREIGN KEY (room_no)
+REFERENCES room(room_no)
+);
+drop table if exists sellTickets;
+CREATE TABLE sellTickets (
+ticket_id INT(30) NOT NULL,
+cinema_name VARCHAR(40) NOT NULL,
+movie_id INT(30) NOT NULL,
+show_date DATE NOT NULL,
+show_time TIME NOT NULL,
+room_no INT(10) NOT NULL,
+seatx INT(10) NOT NULL,
+seaty INT(10) NOT NULL,
+PRIMARY KEY (ticket_id , cinema_name , movie_id)
+);'''
+    cu.executescript(sql_str)
+    cx.commit()
+    cu.close()
+    cx.close()
+    result={'info':'done!'}
+    return HttpResponse(json.dumps(result), content_type="application/json")
 
 
