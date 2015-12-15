@@ -31,24 +31,59 @@ def search_cinema_by_str(request):
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def search_cinema_by_district(request):
-    #district=request.GET['district']
-    result={
+    #district_no=request.GET['district_no']
+    method=int(request.GET['method'])
+    abovemean=int(request.GET['abovemean'])
+    if method==0:
+        result={
+        "data":[
+        {
+            "cinema_name":"影院名1",
+            "address":"地址2",
+            "estimate":1.5,
+            "businessHoursBegin":"10:00",
+            "businessHoursEnd":"12:00"
+
+        },
+        {
+            "cinema_name":"影院名2",
+            "address":"地址2",
+            "estimate":1.2,
+            "businessHoursBegin":"11:00",
+            "businessHoursEnd":"12:00"
+
+        }
+        ]
+    }
+    elif method==1 and abovemean==0:
+        result={
+        "data":[
+            {
+                "cinema_name":"影院名",
+                "address":"地址",
+                "businessHoursBegin":"10:00",
+                "businessHoursEnd":"12:00",
+                "seatsAvailTotal":20
+            }
+        ]
+    }
+    elif method==1 and abovemean==1:
+        result={
     "data":[
     {
         "cinema_name":"影院名1",
         "address":"地址2",
-        "estimate":1.5,
         "businessHoursBegin":"10:00",
-        "businessHoursEnd":"12:00"
+        "businessHoursEnd":"12:00",
+        "seatsTotal":12
 
     },
     {
         "cinema_name":"影院名2",
         "address":"地址2",
-        "estimate":1.2,
         "businessHoursBegin":"11:00",
-        "businessHoursEnd":"12:00"
-
+        "businessHoursEnd":"12:00",
+        "seatsTotal":15
     }
     ]
 }
@@ -79,39 +114,7 @@ def search_cinema_by_movie(request):
 }
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-def search_cinema_max_available_seat_by_district(request):
-    #distinct=request.GET['distinct']
-    result={
-        "cinema_name":"影院名",
-        "address":"地址",
-        "businessHoursBegin":"10:00",
-        "businessHoursEnd":"12:00",
-        "seatsAvailTotal":20
-}
-    return HttpResponse(json.dumps(result), content_type="application/json")
 
-def search_cinema_greater_avg_seat_by_district(request):
-    #distinct=request.GET['distinct']
-    result={
-    "data":[
-    {
-        "cinema_name":"影院名1",
-        "address":"地址2",
-        "businessHoursBegin":"10:00",
-        "businessHoursEnd":"12:00",
-        "seatsTotal":12
-
-    },
-    {
-        "cinema_name":"影院名2",
-        "address":"地址2",
-        "businessHoursBegin":"11:00",
-        "businessHoursEnd":"12:00",
-        "seatsTotal":15
-    }
-    ]
-}
-    return HttpResponse(json.dumps(result), content_type="application/json")
 
 def search_movie_total(request):
     result={
