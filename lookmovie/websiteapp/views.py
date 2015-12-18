@@ -1,5 +1,5 @@
 #encoding:utf8
-import MySQLdb
+#import MySQLdb
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import Http404
@@ -15,15 +15,24 @@ import json
 def login(request):
     #user_name=request.GET['user_name']
     #user_password=request.GET['user_password']
-    result={'logined':True,'info':'success','user_permissions':'normal','user_id':'1c80'}
-    return HttpResponse(json.dumps(result), content_type="application/json")
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    elif request.method == 'POST':
+        result={'logined':True,'info':'success','user_permissions':'normal','user_id':'1c80'}
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
 def sign(request):
     #user_name=request.GET['user_name']
     #user_password=request.GET['user_password']
-    result={'signed':True,'info':'success','user_id':'1c80'}
-    return HttpResponse(json.dumps(result), content_type="application/json")
+    if request.method == 'GET':
+        return render(request, 'signup.html')
+    elif request.method == 'POST':
+        result={'signed':True,'info':'success','user_id':'1c80'}
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
+def index(request):
+    return render(request, 'index.html')
+    
 def search_cinema_by_str(request):
     #search_str=request.GET['search_str']
     result={"data":[{"cinema_name":"影院名1"},
@@ -141,9 +150,20 @@ def search_movie_total(request):
 def ticket(request):
     #ticket_id=request.GET['ticket_id']
     result={
-   "info":"success"
-}
+        "info":"success"
+    }
     return HttpResponse(json.dumps(result), content_type="application/json")
+
+
+def hottoday(request):
+    return render(request, 'hottoday.html')
+
+def cinema(request):
+    return render(request, 'cinema.html')
+
+def hall(request):
+    return render(request, hall)
+
 
 def create_db(request):
     cx = sqlite3.connect("mycinema.db")
@@ -264,5 +284,3 @@ PRIMARY KEY (ticket_id , cinema_name , movie_id)
     cx.close()
     result={'info':'done!'}
     return HttpResponse(json.dumps(result), content_type="application/json")
-
-

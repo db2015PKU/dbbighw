@@ -20,12 +20,15 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/','websiteapp.views.login',name='login'),
     url(r'^sign/','websiteapp.views.sign',name='sign'),
+    url(r'^$', 'websiteapp.views.index', name='index'),
     url(r'^search/cinema/by_str/','websiteapp.views.search_cinema_by_str',name='search_cinema_by_str'),
     url(r'^search/cinema/by_district/','websiteapp.views.search_cinema_by_district',name='search_cinema_by_district'),
     url(r'^search/cinema/by_movie/','websiteapp.views.search_cinema_by_movie',name='search_cinema_by_movie'),
     url(r'^search/movie/total/','websiteapp.views.search_movie_total',name='search_movie_total'),
     url(r'^ticket/','websiteapp.views.ticket',name='ticket'),
-    url(r'^create_db','websiteapp.views.create_db',name='create_db')
+    url(r'^create_db','websiteapp.views.create_db',name='create_db'),
     
-    
+    url(r'^hottoday/', 'websiteapp.views.hottoday', name='hottoday'),
+    url(r'^cinema/', 'websiteapp.views.cinema', name='cinema'),
+    url(r'^hall/', 'websiteapp.views.hall', name='hall'),
 ]
