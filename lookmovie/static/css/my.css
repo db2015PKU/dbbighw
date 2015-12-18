@@ -1,0 +1,9 @@
+body {
+	padding-top: 70px;
+}
+
+.choices {
+	padding: 15px 15px 15px 15px;
+	border:2px solid #a1a1a1;
+	border-radius: 5px;
+}

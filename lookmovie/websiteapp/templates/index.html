@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>爱看电影</title>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="/static/css/my.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">爱看电影</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <li class="active"><a href="/">附近影院</a></li>
+          <li><a href="/hottoday/">今日热映</a></li>
+        </ul>
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="电影名称">
+          </div>
+          <button type="submit" class="btn btn-default">Search</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">用户名<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">我的主页</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#">退出</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container" id="content">
+    <div class="choices">
+      <div class="area">
+        <div class="row">
+          <div class="col-md-1">
+            <p style="font-weight:bold;">行政区：</p>
+          </div>
+          <div class="col-md-11">
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area0" value="0" checked="checked"> 全部
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area1" value="1"> 东城区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area2" value="2"> 西城区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area3" value="3"> 朝阳区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area4" value="4"> 海淀区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area5" value="5"> 丰台区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area6" value="6"> 石景山区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area7" value="7"> 门头沟区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area8" value="8"> 房山区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area9" value="9"> 大兴区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area10" value="10"> 通州区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area11" value="11"> 顺义区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area12" value="12"> 昌平区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area13" value="13"> 平谷区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area14" value="14"> 怀柔区
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area15" value="15"> 密云县
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area16" value="16"> 延庆县
+            </label>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="rankmethod">
+        <div class="row">
+          <div class="col-md-1">
+            <p style="font-weight:bold;">排序：</p>
+          </div>
+          <div class="col-md-11">
+            <label class="radio-inline">
+              <input type="radio" name="rankmethod" onchange="choicesOnchange()" id="rate" value="0" checked="checked"> 综合
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="rankmethod" onchange="choicesOnchange()" id="seat" value="1"> 空位最多
+            </label>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="filter">
+        <div class="row">
+          <div class="col-md-1">
+            <p style="font-weight:bold;">筛选：</p>
+          </div>
+          <div class="col-md-11">
+            <div class="checkbox" style="margin-top: 0px; margin-bottom: 0px;">
+              <label>
+                <input type="checkbox" name="abovemean" onchange="choicesOnchange()" id="abovemean" value="1"> 仅显示空位不低于平均数的影院
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div id="cinemas">
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+      <div class="cinemaEntry col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="/cinema/">美嘉影院</a></h3>
+          </div>
+          <div class="panel-body">
+            <p>评分：8.1</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>余票：123</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p>所在行政区：海淀区</p>
+            <hr style="margin-top: 10px; margin-bottom: 10px" />
+            <p style="margin-bottom: 0px">地址：一二三四五六七八九十一二</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script src="/static/js/jquery.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
+  <script src="/static/js/my.js"></script>
+</body>
+
+</html>
