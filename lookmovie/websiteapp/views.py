@@ -11,14 +11,50 @@ import json
 
 # Create your views here.
 
+#方便使用with语句以免除冗余的创建关闭连接语句
+class getConCur:
+
+    def __enter__(self):
+        self._con = sqlite3.connect("mycinema.db")
+        self._cur = self._con.cursor()
+        return (self._con,self._cur)
+
+    def __exit__(self,type, value, trace):
+        self._cur.close()
+        self._con.close()
+        
+
+def sqlRead(sql_str):
+    with getConCur() as (con,cur):
+        cur.execute(sql)
+        values = cursor.fetchall()
+    return values
+
+def sqlWrite(sql_str):
+    try:
+        with getConCur() as (con,cur):
+            cur.execute(sql)
+            con.commit()
+        return True
+    except Exception,e:
+        return False
+
+
+
 
 def login(request):
+
     #user_name=request.GET['user_name']
     #user_password=request.GET['user_password']
     if request.method == 'GET':
         return render(request, 'login.html')
     elif request.method == 'POST':
-        result={'logined':True,'info':'success','user_permissions':'normal','user_id':'1c80'}
+        user_email=''
+        sql="select user_email,user_password from userAccount where user_email = %s" % user_email
+        dbRes=sqlRead(sql)
+
+        result={'logined':True,'info':'success','user_permissions':'normal'}
+        request.session['logined'] = result['logined']#初始化session
         return HttpResponse(json.dumps(result), content_type="application/json")
 
 def sign(request):
@@ -27,14 +63,35 @@ def sign(request):
     if request.method == 'GET':
         return render(request, 'signup.html')
     elif request.method == 'POST':
-        result={'signed':True,'info':'success','user_id':'1c80'}
+        user_email=''
+        user_password=''
+        sql="insert into userAccount (user_email,user_password) values (%s,%s)" % (user_email,user_password)
+        if sqlWrite(sql):
+            result={'signed':True,'info':'success'}
+        else:
+            result={'signed':True,'info':'user_email_have_been_used'}
+        result={'signed':True,'info':'success'}
         return HttpResponse(json.dumps(result), content_type="application/json")
+        
+def exit(request):
+    del request.session['logined']
+
+def user_ticket_history(request):
+    result={
+    "data":[
+    {"cinema_name":"影院名1","movie_name":"电影名","room_no":"1","room_no":"2"},
+    {"cinema_name":"影院名2","movie_name":"电影名","room_no":"4","room_no":"3"}
+    ]
+    }
+    return HttpResponse(json.dumps(result), content_type="application/json")
 
 def index(request):
     return render(request, 'index.html')
     
 def search_cinema_by_str(request):
     #search_str=request.GET['search_str']
+    sql=""
+    dbRes=sqlRead(sql)
     result={"data":[{"cinema_name":"影院名1"},
     {"cinema_name":"影院名2"}]}
     return HttpResponse(json.dumps(result), content_type="application/json")
