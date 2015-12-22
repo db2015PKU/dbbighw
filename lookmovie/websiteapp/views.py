@@ -39,9 +39,6 @@ def sqlWrite(sql_str):
     except Exception as e:
         return False
 
-
-
-
 def login(request):
 
     #user_name=request.GET['user_name']
@@ -103,7 +100,9 @@ def search_cinema_by_district(request):
         "data":[
         {
             "cinema_name":"影院名1",
-            "address":"地址2",
+            "district": "行政区2",
+            "road": "海淀南路",
+            "busStation": "所在公交站",
             "estimate":1.5,
             "businessHoursBegin":"10:00",
             "businessHoursEnd":"12:00"
@@ -111,9 +110,11 @@ def search_cinema_by_district(request):
         },
         {
             "cinema_name":"影院名2",
-            "address":"地址2",
-            "estimate":1.2,
-            "businessHoursBegin":"11:00",
+            "district": "行政区2",
+            "road": "海淀南路",
+            "busStation": "所在公交站",
+            "estimate":1.5,
+            "businessHoursBegin":"10:00",
             "businessHoursEnd":"12:00"
 
         }

@@ -11,8 +11,12 @@ function choicesOnchange() {
 	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
 }
 function changeCinemas(data) {
-	console.log(JSON.stringify(data));
-	$("#cinemas").html(JSON.stringify(data));
+	$("#cinemas").html("");
+	$.each(data.data, function(i, item){
+		// console.log(item.cinema_name);
+		var content = "<div class=\"cinemaEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"/cinema/\">" + item.cinema_name + "</a></h3></div><div class=\"panel-body\"><p>评分：" + item.estimate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>行政区：" + item.district + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>营业时间：" + item.businessHoursBegin + "~" + item.businessHoursEnd + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>行政区：" + item.district + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>街道：" + item.road + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">公交站：" + item.busStation + "</p></div></div>";
+		$("#cinemas").append(content);
+	});
 }
 
 function buyticket() {
