@@ -36,7 +36,7 @@ def sqlWrite(sql_str):
             cur.execute(sql)
             con.commit()
         return True
-    except Exception,e:
+    except Exception as e:
         return False
 
 
@@ -85,9 +85,7 @@ def user_ticket_history(request):
     }
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-def index(request):
-    return render(request, 'index.html')
-    
+
 def search_cinema_by_str(request):
     #search_str=request.GET['search_str']
     sql=""
@@ -212,6 +210,9 @@ def ticket(request):
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 
+def index(request):
+    return render(request, 'index.html')
+    
 def hottoday(request):
     return render(request, 'hottoday.html')
 
