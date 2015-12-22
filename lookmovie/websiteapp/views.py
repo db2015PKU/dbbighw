@@ -41,8 +41,8 @@ def search_cinema_by_str(request):
 
 def search_cinema_by_district(request):
     #district_no=request.GET['district_no']
-    method=int(request.GET['method'])
-    abovemean=int(request.GET['abovemean'])
+    method=int(request.POST['rankmethod'])
+    abovemean=int(request.POST['abovemean'])
     if method==0:
         result={
         "data":[
@@ -162,7 +162,7 @@ def cinema(request):
     return render(request, 'cinema.html')
 
 def hall(request):
-    return render(request, hall)
+    return render(request, 'hall.html')
 
 
 def create_db(request):

@@ -72,7 +72,17 @@ function modalclose(){
 }
 function buysuccess(){
 	//window.location = "http://localhost:8000/";
+	modalclose();
 }
 function buyfailed(){
 	//window.location = "http://localhost:8000/hall/";
+	modalclose();
+}
+
+function indexCinema(){
+	console.log('fuckkkkk');
+	var area = 0;
+	var rankmethod = 0;
+	var abovemean = 0;
+	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
 }
