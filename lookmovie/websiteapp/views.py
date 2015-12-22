@@ -50,8 +50,17 @@ def login(request):
         return render(request, 'login.html')
     elif request.method == 'POST':
         user_email=''
-        sql="select user_email,user_password from userAccount where user_email = %s" % user_email
+        user_password=''
+        sql="select user_email,user_password,user_permissions from userAccount where user_email = %s" % user_email
         dbRes=sqlRead(sql)
+        if dbRes:
+            if dbRes[0][1]==user_password:
+                result={'logined':True,'info':'success'}
+                result['user_permissions']=dbRes[0][2]
+            else:
+                result={'logined':False,'info':'password_error','user_permissions':'normal'}
+        else:
+            result={'logined':False,'info':'no_such_user','user_permissions':'normal'}
 
         result={'logined':True,'info':'success','user_permissions':'normal'}
         request.session['logined'] = result['logined']#初始化session
@@ -77,6 +86,7 @@ def exit(request):
     del request.session['logined']
 
 def user_ticket_history(request):
+    sql='''select '''
     result={
     "data":[
     {"cinema_name":"影院名1","movie_name":"电影名","room_no":"1","room_no":"2"},
@@ -88,16 +98,24 @@ def user_ticket_history(request):
 def index(request):
     return render(request, 'index.html')
     
-def search_cinema_by_str(request):
+def search_cinema_by_str(request):#按电影名称查询电影院
     #search_str=request.GET['search_str']
-    sql=""
+    search_str=''
+    sql="select cinema_name (from movies_of_cinema left outer join movie) where movie_name like '%"+search_str+"%'"
     dbRes=sqlRead(sql)
+    result['data']=[{"cinema_name":x[0]} for x in dbRes]
     result={"data":[{"cinema_name":"影院名1"},
     {"cinema_name":"影院名2"}]}
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def search_cinema_by_district(request):
+    '''
+    "district_no":"行政区编号,0表示全部，1~16为北京的16个行政区",
+    "method": "排序方法，0为按综合排序（空座位+评分），1为按照空位，即 method为0时按综合排序给出普通搜索的结果，如果method为1  再根据abovemean是0还是1定",
+    "abovemean":"在method为1的情况下，0返回空位最高的，1返回空位高于平均"
+    '''
     #district_no=request.GET['district_no']
+    district_no=''
     method=int(request.GET['method'])
     abovemean=int(request.GET['abovemean'])
     if method==0:
@@ -105,7 +123,9 @@ def search_cinema_by_district(request):
         "data":[
         {
             "cinema_name":"影院名1",
-            "address":"地址2",
+            "district":"行政区2",
+            "road":"所在街道",
+            "busStation":"所在公交车站",
             "estimate":1.5,
             "businessHoursBegin":"10:00",
             "businessHoursEnd":"12:00"
@@ -113,7 +133,9 @@ def search_cinema_by_district(request):
         },
         {
             "cinema_name":"影院名2",
-            "address":"地址2",
+            "district":"行政区2",
+            "road":"所在街道",
+            "busStation":"所在公交车站",
             "estimate":1.2,
             "businessHoursBegin":"11:00",
             "businessHoursEnd":"12:00"
@@ -126,7 +148,9 @@ def search_cinema_by_district(request):
         "data":[
             {
                 "cinema_name":"影院名",
-                "address":"地址",
+                "district":"行政区2",
+                "road":"所在街道",
+                "busStation":"所在公交车站",
                 "businessHoursBegin":"10:00",
                 "businessHoursEnd":"12:00",
                 "seatsAvailTotal":20
@@ -138,7 +162,9 @@ def search_cinema_by_district(request):
     "data":[
     {
         "cinema_name":"影院名1",
-        "address":"地址2",
+        "district":"行政区1",
+        "road":"所在街道",
+        "busStation":"所在公交车站",
         "businessHoursBegin":"10:00",
         "businessHoursEnd":"12:00",
         "seatsTotal":12
@@ -146,7 +172,9 @@ def search_cinema_by_district(request):
     },
     {
         "cinema_name":"影院名2",
-        "address":"地址2",
+        "district":"行政区2",
+        "road":"所在街道",
+        "busStation":"所在公交车站",
         "businessHoursBegin":"11:00",
         "businessHoursEnd":"12:00",
         "seatsTotal":15
@@ -161,7 +189,9 @@ def search_cinema_by_movie(request):
     "data":[
     {
         "cinema_name":"影院名1",
-        "address":"地址2",
+        "district":"行政区",
+        "road":"所在街道",
+        "busStation":"所在公交车站",
         "estimate":1.5,
         "businessHoursBegin":"10:00",
         "businessHoursEnd":"12:00",
@@ -170,7 +200,9 @@ def search_cinema_by_movie(request):
     },
     {
         "cinema_name":"影院名2",
-        "address":"地址2",
+        "district":"行政区",
+        "road":"所在街道",
+        "busStation":"所在公交车站",
         "estimate":1.2,
         "businessHoursBegin":"11:00",
         "businessHoursEnd":"12:00",
