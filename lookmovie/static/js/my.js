@@ -12,7 +12,7 @@ function choicesOnchange() {
 }
 function changeCinemas(data) {
 	$("#cinemas").html("");
-	$.each(data.data, function(i, item){
+	$.each(data.data, function (i, item) {
 		// console.log(item.cinema_name);
 		var content = "<div class=\"cinemaEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"/cinema/\">" + item.cinema_name + "</a></h3></div><div class=\"panel-body\"><p>评分：" + item.estimate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>行政区：" + item.district + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>营业时间：" + item.businessHoursBegin + "~" + item.businessHoursEnd + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>行政区：" + item.district + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>街道：" + item.road + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">公交站：" + item.busStation + "</p></div></div>";
 		$("#cinemas").append(content);
@@ -35,7 +35,7 @@ function buyticket() {
 		$('#mymodal').modal("show");
 		return;
 	}
-	
+
 	$(".modal-title").html("购票信息");
 	$(".modal-body").html("<h5>已选票：</h5><ul>")
 	//<li>3排4号</li><li>3排5号</li>
@@ -47,7 +47,7 @@ function buyticket() {
 		$(".modal-body").append("<li>" + col + "排" + row + "号</li>");
 	}
 	$(".modal-body").append("</ul>");
-	$("#buy").html("购票");	
+	$("#buy").html("购票");
 	$("#buy").attr("onclick", "buy()");
 	$('#mymodal').modal("show");
 }
@@ -71,22 +71,29 @@ function buy() {
 		$("#buy").attr("onclick", "buyfailed()");
 	}
 }
-function modalclose(){
+function modalclose() {
 	$('#mymodal').modal("hide");
 }
-function buysuccess(){
+function buysuccess() {
 	//window.location = "http://localhost:8000/";
 	modalclose();
 }
-function buyfailed(){
+function buyfailed() {
 	//window.location = "http://localhost:8000/hall/";
 	modalclose();
 }
 
-function indexCinema(){
-	console.log('fuckkkkk');
+function indexCinema() {
 	var area = 0;
 	var rankmethod = 0;
 	var abovemean = 0;
 	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
+}
+function hottodayFilms() {
+	$.getJSON("/hottoday/", function (data) {
+		$("#films").html("");
+		$.each(data.data, function (i, item) {		
+			var content = "<div class=\"filmEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"#\">" + item.movie_name + "</a></h3></div><div class=\"panel-body\"><p>上座率：" + item.sold_rate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">最低价/最高价：" + item.max_price + "/" + item.min_price + "</p></div></div></div>"});
+			$("#films").append(content);
+	});
 }
