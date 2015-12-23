@@ -27,7 +27,7 @@ class getConCur:
 def sqlRead(sql_str):
     with getConCur() as (con,cur):
         cur.execute(sql_str)
-        values = cursor.fetchall()
+        values = cur.fetchall()
     return values
 
 def sqlWrite(sql_str):
@@ -46,9 +46,10 @@ def login(request):
     if request.method == 'GET':
         return render(request, 'login.html')
     elif request.method == 'POST':
-        user_email=''
-        user_password=''
-        sql="select user_email,user_password,user_permissions from userAccount where user_email = %s" % user_email
+        user_email="fdffdf@qq.com"#request.POST['user_email']
+        user_password="qerere"#request.POST['user_password']
+        sql="select user_email,user_password,user_permissions from userAccount where user_email = '%s'" % user_email
+        print sql
         dbRes=sqlRead(sql)
         if dbRes:
             if dbRes[0][1]==user_password:
