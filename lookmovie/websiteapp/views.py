@@ -40,9 +40,6 @@ def sqlWrite(sql_str):
         return False
 
 def login(request):
-
-    #user_name=request.GET['user_name']
-    #user_password=request.GET['user_password']
     if request.method == 'GET':
         return render(request, 'login.html')
     elif request.method == 'POST':
@@ -55,12 +52,14 @@ def login(request):
             if dbRes[0][1]==user_password:
                 result={'logined':True,'info':'success'}
                 result['user_permissions']=dbRes[0][2]
+                print 'success'
             else:
                 result={'logined':False,'info':'password_error','user_permissions':'normal'}
+                print 'pswd error'
         else:
             result={'logined':False,'info':'no_such_user','user_permissions':'normal'}
 
-        result={'logined':True,'info':'success','user_permissions':'normal'}
+        #result={'logined':True,'info':'success','user_permissions':'normal'}
         request.session['logined'] = result['logined']#初始化session
         return HttpResponse(json.dumps(result), content_type="application/json")
 
@@ -70,14 +69,16 @@ def sign(request):
     if request.method == 'GET':
         return render(request, 'signup.html')
     elif request.method == 'POST':
-        user_email=''
-        user_password=''
+        user_email="fdffdf@qq.com"#request.POST['user_email']
+        user_password="qeree"#request.POST['user_password']
         sql="insert into userAccount (user_email,user_password) values (%s,%s)" % (user_email,user_password)
         if sqlWrite(sql):
             result={'signed':True,'info':'success'}
+            print 'success'
         else:
             result={'signed':True,'info':'user_email_have_been_used'}
-        result={'signed':True,'info':'success'}
+            print 'eamil exist'
+        #result={'signed':True,'info':'success'}
         return HttpResponse(json.dumps(result), content_type="application/json")
         
 def exit(request):
@@ -96,28 +97,32 @@ def user_ticket_history(request):
 def index(request):
     return render(request, 'index.html')
     
-def search_cinema_by_str(request):#按电影名称查询电影院
-    #search_str=request.GET['search_str']
-    search_str=''
-    sql="select cinema_name (from movies_of_cinema left outer join movie) where movie_name like '%"+search_str+"%'"
+def search_cinema_by_str(request):#按关键字搜索本地电影院
+    search_str=u'美嘉'#request.GET['search_str']
+    sql="select cinema_name from cinema where cinema_name like '%"+search_str+"%'"#差空位数
     dbRes=sqlRead(sql)
-    result['data']=[{"cinema_name":x[0]} for x in dbRes]
-    result={"data":[{"cinema_name":"影院名1"},
-    {"cinema_name":"影院名2"}]}
+    result={"data":[{"cinema_name":x[0]} for x in dbRes]}
+    #result={"data":[{"cinema_name":"影院名1"},
+    #{"cinema_name":"影院名2"}]}
     return HttpResponse(json.dumps(result), content_type="application/json")
 
+District_dict={'0':"海淀区"}
 def search_cinema_by_district(request):
     '''
     "district_no":"行政区编号,0表示全部，1~16为北京的16个行政区",
     "method": "排序方法，0为按综合排序（空座位+评分），1为按照空位，即 method为0时按综合排序给出普通搜索的结果，如果method为1  再根据abovemean是0还是1定",
     "abovemean":"在method为1的情况下，0返回空位最高的，1返回空位高于平均"
     '''
-    #district_no=request.GET['district_no']
-    district_no=''
-    method=int(request.GET['method'])
-    abovemean=int(request.GET['abovemean'])
+    district_no='0'#request.POST['district_no']
+    district=District_dict[district_no]
+
+    method=0#int(request.POST['method'])
+    abovemean=0#int(request.POST['abovemean'])
     if method==0:
-        result={
+        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s'" % district
+        dbRes=sqlRead(sql)
+        result={"data":[{"cinema_name":x[0],"district":x[1],"road":x[2],"busStation":x[3],"businessHoursBegin":x[4],"businessHoursBegin":x[5]} for x in dbRes]}
+        '''result={
         "data":[
         {
             "cinema_name":"影院名1",
@@ -140,8 +145,10 @@ def search_cinema_by_district(request):
 
         }
         ]
-    }
+    }'''
     elif method==1 and abovemean==0:
+        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s'" % district
+        dbRes=sqlRead(sql)#等空位
         result={
         "data":[
             {
@@ -156,6 +163,8 @@ def search_cinema_by_district(request):
         ]
     }
     elif method==1 and abovemean==1:
+        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s'" % district
+        dbRes=sqlRead(sql)#等空位
         result={
     "data":[
     {
@@ -182,7 +191,9 @@ def search_cinema_by_district(request):
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 def search_cinema_by_movie(request):
-    #movie_name=request.GET['movie_name']
+    movie_name="万万"#request.POST['movie_name']
+    sql="select cinema.cinema_name,cinema.estimate,cinema.district,cinema.road,cinema.busStation,movie.movie_name from (movies_of_cinema inner join movie on movies_of_cinema.movie_id = movie.movie_id) inner join cinema on movies_of_cinema.cinema_name = cinema.cinema_name  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数
+    dbRes=sqlRead(sql)#返回了空
     result={
     "data":[
     {
@@ -212,7 +223,9 @@ def search_cinema_by_movie(request):
 
 
 
-def search_movie_total(request):
+def search_movie_total(request):#找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
+
+    #等空位和票价信息增加
     result={
     "data":[
        { 
@@ -236,6 +249,7 @@ def search_movie_total(request):
 
 def ticket(request):
     #ticket_id=request.GET['ticket_id']
+    #等触发器
     result={
         "info":"success"
     }
