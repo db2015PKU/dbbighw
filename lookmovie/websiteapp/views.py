@@ -36,11 +36,8 @@ def sqlWrite(sql_str):
             cur.execute(sql)
             con.commit()
         return True
-    except Exception,e:
+    except Exception as e:
         return False
-
-
-
 
 def login(request):
 
@@ -123,9 +120,9 @@ def search_cinema_by_district(request):
         "data":[
         {
             "cinema_name":"影院名1",
-            "district":"行政区2",
-            "road":"所在街道",
-            "busStation":"所在公交车站",
+            "district": "行政区2",
+            "road": "海淀南路",
+            "busStation": "所在公交站",
             "estimate":1.5,
             "businessHoursBegin":"10:00",
             "businessHoursEnd":"12:00"
@@ -133,11 +130,11 @@ def search_cinema_by_district(request):
         },
         {
             "cinema_name":"影院名2",
-            "district":"行政区2",
-            "road":"所在街道",
-            "busStation":"所在公交车站",
-            "estimate":1.2,
-            "businessHoursBegin":"11:00",
+            "district": "行政区2",
+            "road": "海淀南路",
+            "busStation": "所在公交站",
+            "estimate":1.5,
+            "businessHoursBegin":"10:00",
             "businessHoursEnd":"12:00"
 
         }
@@ -244,6 +241,9 @@ def ticket(request):
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 
+def index(request):
+    return render(request, 'index.html')
+    
 def hottoday(request):
     return render(request, 'hottoday.html')
 
@@ -251,7 +251,7 @@ def cinema(request):
     return render(request, 'cinema.html')
 
 def hall(request):
-    return render(request, hall)
+    return render(request, 'hall.html')
 
 
 def create_db(request):
