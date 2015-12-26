@@ -65,9 +65,25 @@
 				</div>
 				总计：<b>￥<span id="total">0</span></b>
 				<hr />
-				<button class="btn btn-inverse">结算 »</button>
+				<button class="btn btn-inverse" onclick="buyticket()">结算 »</button>
 
 				<div id="legend-container">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">确认购票？</h4>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<button id="close" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button id="buy" type="button" class="btn btn-primary" onclick="buy()">购票</button>
 				</div>
 			</div>
 		</div>
@@ -112,7 +128,7 @@
 						$("#total").html(total);
 						$("#selected-seats").append(content);
 						var $div = $('#selected-seats-container');  
-						$div.scrollTop($div[0].scrollHeight); 
+						$div.scrollTop($div[0].scrollHeight);
 						return 'selected';
 					} else if (this.status() == 'selected'){
 						var id = this.settings.id;

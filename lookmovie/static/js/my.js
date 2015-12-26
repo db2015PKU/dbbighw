@@ -20,10 +20,10 @@ function changeCinemas(data) {
 }
 
 function buyticket() {
-	var allseat = $("input[name='seat'][disabled!='disabled']:checked");
+	var allseat = $(".seatCharts-seat.selected");
 	var data = new Array();
 	for (var i = 0; i < allseat.length; i++) {
-		data.push(allseat[i].value);
+		data.push(allseat[i].id);
 	}
 	console.log(data);
 	if (data.length == 0) {
@@ -40,11 +40,10 @@ function buyticket() {
 	$(".modal-body").html("<h5>已选票：</h5><ul>")
 	//<li>3排4号</li><li>3排5号</li>
 	for (var i = 0; i < data.length; i++) {
-		var row = data[i] % 100;
-		var col = (data[i] - row) / 100;
+		var tmp = data[i].split("_");
 		//console.log(row);
 		//console.log(col);
-		$(".modal-body").append("<li>" + col + "排" + row + "号</li>");
+		$(".modal-body").append("<li>" + tmp[0] + "排" + tmp[1] + "号</li>");
 	}
 	$(".modal-body").append("</ul>");
 	$("#buy").html("购票");
