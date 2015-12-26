@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="x-ua-compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>爱看电影</title>
+	<link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="/static/css/my.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/">爱看电影</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav navbar-left">
+					<li><a href="/">附近影院</a></li>
+					<li><a href="/hottoday/">今日热映</a></li>
+				</ul>
+				<form class="navbar-form navbar-left" role="search">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="电影名称">
+					</div>
+					<button type="submit" class="btn btn-default">Search</button>
+				</form>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">用户名<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#">我的主页</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">退出</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+		<div class="hallinfo alert alert-success" role="alert">
+			<p>
+				<strong>电影名：</strong> 火星救援， <strong>时间：</strong> 2015-12-13 17:11，<strong>放映厅编号：</strong> 1
+			</p>
+		</div>
+		<div class="seats">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Col 01</th>
+						<th>Col 02</th>
+						<th>Col 03</th>
+						<th>Col 04</th>
+						<th>Col 05</th>
+						<th>Col 06</th>
+						<th>Col 07</th>
+						<th>Col 08</th>
+						<th>Col 09</th>
+						<th>Col 10</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">Row 01</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0101" value="0101" checked="checked" disabled="disabled">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0102" value="0102">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0103" value="0103">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0104" value="0104">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0105" value="0105">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0106" value="0106">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0107" value="0107">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0108" value="0108">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0109" value="0109">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0110" value="0110">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 02</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0201" value="0201">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0202" value="0202">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0203" value="0203">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0204" value="0204">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0205" value="0205">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0206" value="0206">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0207" value="0207">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0208" value="0208">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0209" value="0209">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0210" value="0210">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 03</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0301" value="0301">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0302" value="0302">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0303" value="0303">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0304" value="0304">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0305" value="0305">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0306" value="0306">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0307" value="0307">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0308" value="0308">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0309" value="0309">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0310" value="0310">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 04</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0401" value="0401">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0402" value="0402">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0403" value="0403">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0404" value="0404">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0405" value="0405">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0406" value="0406">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0407" value="0407">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0408" value="0408">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0409" value="0409">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0410" value="0410">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 05</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0501" value="0501">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0502" value="0502">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0503" value="0503">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0504" value="0504">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0505" value="0505">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0506" value="0506">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0507" value="0507">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0508" value="0508">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0509" value="0509">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0510" value="0510">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 06</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0601" value="0601">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0602" value="0602">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0603" value="0603">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0604" value="0604">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0605" value="0605">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0606" value="0606">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0607" value="0607">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0608" value="0608">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0609" value="0609">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0610" value="0610">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 07</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0701" value="0701">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0702" value="0702">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0703" value="0703">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0704" value="0704">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0705" value="0705">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0706" value="0706">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0707" value="0707">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0708" value="0708">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0709" value="0709">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0710" value="0710">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 08</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0801" value="0801">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0802" value="0802">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0803" value="0803">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0804" value="0804">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0805" value="0805">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0806" value="0806">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0807" value="0807">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0808" value="0808">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0809" value="0809">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0810" value="0810">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 09</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat0901" value="0901">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0902" value="0902">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0903" value="0903">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0904" value="0904">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0905" value="0905">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0906" value="0906">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0907" value="0907">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0908" value="0908">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0909" value="0909">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat0910" value="0910">
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Row 10</th>
+						<td>
+							<input type="checkbox" name="seat" id="seat1001" value="1001">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1002" value="1002">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1003" value="1003">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1004" value="1004">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1005" value="1005">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1006" value="1006">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1007" value="1007">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1008" value="1008">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1009" value="1009">
+						</td>
+						<td>
+							<input type="checkbox" name="seat" id="seat1010" value="1010">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="col-md-offset-5 col-md-1">
+				<button class="btn btn-lg" onclick="buyticket()">Buy</button>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade bs-example-modal-lg" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">确认购票？</h4>
+				</div>
+				<div class="modal-body">
+					<p>One fine body&hellip;</p>
+				</div>
+				<div class="modal-footer">
+					<button id="close" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button id="buy" type="button" class="btn btn-primary" onclick="buy()">购票</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/my.js"></script>
+</body>
+
+</html>
