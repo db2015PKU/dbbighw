@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<Cinemas>
+    <Cinema>
+        <CinemaName>美嘉</CinemaName>
+        <Info>
+            <BasicInfo>
+                <Location>
+                    <District>海淀区</District>
+                    <Road>中关村</Road>
+                    <BusStation>中关村南</BusStation>
+                </Location>
+                <Phone>010-555</Phone>
+                <BusinessHours>10:00-24:00</BusinessHours>
+            </BasicInfo>
+            <OtherInfo>
+                <Estimate>8.3</Estimate>
+                <Movies>
+                    <Movie>
+                        <Name>Ant</Name>
+                        <Date>2015-10-27 12:15:00</Date>
+                        <Runtime>117min</Runtime>
+                        <Director>PPP</Director>
+                        <Actors>P,M,D</Actors>
+                        <Type>Action</Type>
+                        <Language>English</Language>
+                        <Room>1</Room>
+                        <Price>40</Price>
+                    </Movie>
+                    <Movie>
+                        <Name>xxxx</Name>
+                        <Date>2015-10-27 12:15:00</Date>
+                        <Runtime>117min</Runtime>
+                        <Director>PPP</Director>
+                        <Actors>P,M,D</Actors>
+                        <Type>Action</Type>
+                        <Language>English</Language>
+                        <Room>1</Room>
+                        <Price>40</Price>
+                    </Movie>
+                </Movies>
+            </OtherInfo>
+        </Info>
+
+    </Cinema>
+    <Cinema>
+        <CinemaName>嘉禾</CinemaName>
+        <Info>
+            <BasicInfo>
+                <Location>
+                    <District>海淀区</District>
+                    <Road>中关村</Road>
+                    <BusStation>中关村南</BusStation>
+                </Location>
+                <Phone>010-555</Phone>
+                <BusinessHours>10:00-24:00</BusinessHours>
+            </BasicInfo>
+            <OtherInfo>
+                <Estimate>8.3</Estimate>
+                <Movies>
+                    <Movie>
+                        <Name>Ant</Name>
+                        <Date>2015-10-27 12:15:00</Date>
+                        <Runtime>117min</Runtime>
+                        <Director>PPP</Director>
+                        <Actors>P,M,D</Actors>
+                        <Type>Action</Type>
+                        <Language>English</Language>
+                        <Room>1</Room>
+                        <Price>40</Price>
+                    </Movie>
+                    <Movie>
+                        <Name>xxxx</Name>
+                        <Date>2015-10-27 12:15:00</Date>
+                        <Runtime>117min</Runtime>
+                        <Director>PPP</Director>
+                        <Actors>P,M,D</Actors>
+                        <Type>Action</Type>
+                        <Language>English</Language>
+                        <Room>1</Room>
+                        <Price>40</Price>
+                    </Movie>
+                </Movies>
+            </OtherInfo>
+        </Info>
+
+    </Cinema>
+
+</Cinemas>

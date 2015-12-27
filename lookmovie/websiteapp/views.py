@@ -1,6 +1,7 @@
 #encoding:utf8
 #import MySQLdb
 from django.shortcuts import render
+from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.http import Http404
 from django.core.paginator import Paginator
@@ -267,6 +268,9 @@ def cinema(request):
 
 def hall(request):
     return render(request, 'hall.html')
+
+def cinema_xml(request):
+    return render(request,'test.xml',content_type="application/xml")  
 
 
 def create_db(request):

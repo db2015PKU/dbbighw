@@ -31,5 +31,6 @@ urlpatterns = [
     url(r'^user_ticket_history/','websiteapp.views.user_ticket_history',name='user_ticket_history'),
     url(r'^hottoday/', 'websiteapp.views.hottoday', name='hottoday'),
     url(r'^cinema/', 'websiteapp.views.cinema', name='cinema'),
+    url(r'^cinema_xml/', 'websiteapp.views.cinema_xml', name='cinema_xml'),
     url(r'^hall/', 'websiteapp.views.hall', name='hall'),
 ]
