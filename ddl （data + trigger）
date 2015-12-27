@@ -1,0 +1,381 @@
+create database myCinema;
+use myCinema;
+
+drop table if exists cinema;
+CREATE TABLE cinema (
+    cinema_name VARCHAR(40) NOT NULL,
+    district VARCHAR(20) NOT NULL,
+    road VARCHAR(20) NOT NULL,
+    busStation VARCHAR(20) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    businessHoursBegin TIME NOT NULL,
+    businessHoursEnd TIME NOT NULL,
+    estimate NUMERIC(2 , 1 ) CHECK (estimate > 0 AND estimate < 10),
+    PRIMARY KEY (cinema_name)
+);
+
+insert into cinema values ('美嘉欢乐影城', '海淀区', '中关村大街', '中关村北站', '36370000', '08:30', '23:30', '7.0');
+insert into cinema values ('金逸国际影城', '海淀区', '中关村大街', '中关村北站', '36370001', '08:30', '23:30', '7.1');
+insert into cinema values ('工人文化宫', '石景山区', '万柳北街', '华府站', '36370002', '08:30', '23:30', '7.2');
+insert into cinema values ('UME国际影城', '海淀区', '科学院南路', '双安站', '36370003', '08:30', '23:30', '7.3');
+insert into cinema values ('星美影城', '海淀区', '远大路', '金源站', '36370004', '08:30', '23:30', '7.4');
+insert into cinema values ('五道口影院', '海淀区', '成府路', '五道口站', '36370005', '08:30', '23:30', '7.5');
+insert into cinema values ('新华影城', '海淀区', '成府路', '大钟寺站', '36370006', '08:30', '23:30', '7.6');
+insert into cinema values ('橙天嘉禾影城', '海淀区', '农大南路', '农大站', '36370007', '08:30', '23:30', '7.7');
+insert into cinema values ('嘉华影城', '海淀区', '学清路', '圣熙站', '36370008', '08:30', '23:30', '7.8');
+insert into cinema values ('17.5影城', '海淀区', '四道口路', '四道口站', '36370009', '08:30', '23:30', '7.9');
+insert into cinema values ('四季青影城', '海淀区', '西四环北路', '四季青桥站', '36370010', '08:30', '23:30', '8.0');
+insert into cinema values ('星汇聚影城', '海淀区', '海淀中街', '华润站', '36370011', '08:30', '23:30', '8.1');
+insert into cinema values ('万画影城', '海淀区', '西四环北路', '四清站', '36370012', '08:30', '23:30', '8.2');
+insert into cinema values ('天幕影城', '海淀区', '北三环中路', '中视站', '36370013', '08:30', '23:30', '8.3');
+insert into cinema values ('天宝国际影城', '朝阳区', '祁连街', '健翔站', '36370014', '08:30', '23:30', '8.4');
+insert into cinema values ('中影国际影城', '海淀区', '外大街', '新街口站', '36370015', '09:30', '23:00', '8.5');
+insert into cinema values ('大地影院', '海淀区', '越秀路', '同厦站', '36370016', '09:30', '23:00', '8.6');
+
+drop table if exists room;
+CREATE TABLE room (
+    room_no INT(10) NOT NULL,
+    seatx_max INT(10) NOT NULL,
+    seaty_max INT(10) NOT NULL,
+    PRIMARY KEY (room_no)
+);
+
+insert into room values ('1', '10', '10');
+insert into room values ('2', '10', '10');
+insert into room values ('3', '10', '10');
+insert into room values ('4', '10', '10');
+insert into room values ('5', '10', '10');
+insert into room values ('6', '10', '10');
+insert into room values ('7', '10', '10');
+insert into room values ('8', '10', '10');
+insert into room values ('9', '10', '10');
+insert into room values ('10', '10', '10');
+insert into room values ('11', '10', '10');
+insert into room values ('12', '10', '10');
+insert into room values ('13', '10', '10');
+insert into room values ('14', '10', '10');
+insert into room values ('15', '10', '10');
+insert into room values ('16', '10', '10');
+insert into room values ('17', '10', '10');
+insert into room values ('18', '10', '10');
+insert into room values ('19', '10', '10');
+insert into room values ('20', '10', '10');
+insert into room values ('21', '10', '10');
+insert into room values ('22', '10', '10');
+insert into room values ('23', '10', '10');
+insert into room values ('24', '10', '10');
+insert into room values ('25', '10', '10');
+insert into room values ('26', '10', '10');
+insert into room values ('27', '10', '10');
+insert into room values ('28', '10', '10');
+insert into room values ('29', '10', '10');
+insert into room values ('30', '10', '10');
+insert into room values ('31', '10', '10');
+insert into room values ('32', '10', '10');
+insert into room values ('33', '10', '10');
+insert into room values ('34', '10', '10');
+insert into room values ('35', '10', '10');
+insert into room values ('36', '10', '10');
+insert into room values ('37', '10', '10');
+insert into room values ('38', '10', '10');
+insert into room values ('39', '10', '10');
+insert into room values ('40', '10', '10');
+insert into room values ('41', '10', '10');
+insert into room values ('42', '10', '10');
+insert into room values ('43', '10', '10');
+insert into room values ('44', '10', '10');
+insert into room values ('45', '10', '10');
+insert into room values ('46', '10', '10');
+insert into room values ('47', '10', '10');
+insert into room values ('48', '10', '10');
+insert into room values ('49', '10', '10');
+insert into room values ('50', '10', '10');
+insert into room values ('51', '10', '10');
+insert into room values ('52', '10', '10');
+insert into room values ('53', '10', '10');
+insert into room values ('54', '10', '10');
+insert into room values ('55', '10', '10');
+insert into room values ('56', '10', '10');
+insert into room values ('57', '10', '10');
+insert into room values ('58', '10', '10');
+insert into room values ('59', '10', '10');
+insert into room values ('60', '10', '10');
+insert into room values ('61', '10', '10');
+insert into room values ('62', '10', '10');
+insert into room values ('63', '10', '10');
+insert into room values ('64', '10', '10');
+insert into room values ('65', '10', '10');
+insert into room values ('66', '10', '10');
+insert into room values ('67', '10', '10');
+insert into room values ('68', '10', '10');
+insert into room values ('69', '10', '10');
+insert into room values ('70', '10', '10');
+insert into room values ('71', '10', '10');
+insert into room values ('72', '10', '10');
+insert into room values ('73', '10', '10');
+insert into room values ('74', '10', '10');
+insert into room values ('75', '10', '10');
+insert into room values ('76', '10', '10');
+insert into room values ('77', '10', '10');
+insert into room values ('78', '10', '10');
+insert into room values ('79', '10', '10');
+insert into room values ('80', '10', '10');
+insert into room values ('81', '10', '10');
+insert into room values ('82', '10', '10');
+insert into room values ('83', '10', '10');
+insert into room values ('84', '10', '10');
+insert into room values ('85', '10', '10');
+insert into room values ('86', '10', '10');
+insert into room values ('87', '10', '10');
+insert into room values ('88', '10', '10');
+insert into room values ('89', '10', '10');
+insert into room values ('90', '10', '10');
+insert into room values ('91', '10', '10');
+insert into room values ('92', '10', '10');
+insert into room values ('93', '10', '10');
+insert into room values ('94', '10', '10');
+insert into room values ('95', '10', '10');
+insert into room values ('96', '10', '10');
+insert into room values ('97', '10', '10');
+insert into room values ('98', '10', '10');
+insert into room values ('99', '10', '10');
+insert into room values ('100', '10', '10');
+
+
+drop table if exists room_of_cinema;
+CREATE TABLE room_of_cinema (
+    cinema_name VARCHAR(40) NOT NULL,
+    room_no INT(10) NOT NULL,
+    PRIMARY KEY (cinema_name , room_no),
+    constraint cinema_name1 FOREIGN KEY (cinema_name)
+        REFERENCES cinema (cinema_name)
+        on delete cascade,
+    constraint room_no1 foreign key (room_no)
+        REFERENCES room(room_no)
+        on delete cascade
+);
+
+insert into room_of_cinema values ('美嘉欢乐影城', '1');
+insert into room_of_cinema values ('美嘉欢乐影城', '2');
+insert into room_of_cinema values ('美嘉欢乐影城', '3');
+insert into room_of_cinema values ('美嘉欢乐影城', '4');
+insert into room_of_cinema values ('美嘉欢乐影城', '5');
+insert into room_of_cinema values ('金逸国际影城', '6');
+insert into room_of_cinema values ('金逸国际影城', '7');
+insert into room_of_cinema values ('金逸国际影城', '8');
+insert into room_of_cinema values ('金逸国际影城', '9');
+insert into room_of_cinema values ('金逸国际影城', '10');
+insert into room_of_cinema values ('工人文化宫', '11');
+insert into room_of_cinema values ('工人文化宫', '12');
+insert into room_of_cinema values ('工人文化宫', '13');
+insert into room_of_cinema values ('工人文化宫', '14');
+insert into room_of_cinema values ('工人文化宫', '15');
+insert into room_of_cinema values ('UME国际影城', '16');
+insert into room_of_cinema values ('UME国际影城', '17');
+insert into room_of_cinema values ('UME国际影城', '18');
+insert into room_of_cinema values ('UME国际影城', '19');
+insert into room_of_cinema values ('UME国际影城', '20');
+insert into room_of_cinema values ('星美影城', '21');
+insert into room_of_cinema values ('星美影城', '22');
+insert into room_of_cinema values ('星美影城', '23');
+insert into room_of_cinema values ('星美影城', '24');
+insert into room_of_cinema values ('星美影城', '25');
+
+ 
+drop table if exists movie;
+CREATE TABLE movie (
+    movie_id INT(30) NOT NULL,
+    movie_name VARCHAR(40) NOT NULL,
+    show_date DATE NOT NULL,
+    show_time TIME NOT NULL,
+    runtime INT(20) NOT NULL,
+    director VARCHAR(40) NOT NULL,
+    actors VARCHAR(40) NOT NULL,
+    movie_type VARCHAR(40) CHECK (movie_type IN ('literary' , 'horror',
+        'action',
+        'comedy',
+        'pornographic',
+        'thriller')),
+    movie_language VARCHAR(20) CHECK (movie_language IN ('Chinese' , 'English')),
+    price NUMERIC(4 , 2 ) NOT NULL,
+    PRIMARY KEY (movie_id)
+);
+
+insert into movie values ('1', '万万没想到', '2015-12-18', '12:00:00', '98', '叫兽易小星', '白客/杨子珊/陈柏霖/马天宇', 'comedy', 'Chinese', '48');
+insert into movie values ('2', '寻龙诀', '2015-12-18', '12:00:00', '125', '乌尔善', '陈坤/黄渤/舒淇/马杨颖', 'action', 'Chinese', '56');
+insert into movie values ('3', '恶棍天使', '2015-12-24', '12:00:00', '124', '邓超', '邓超/孙俪', 'comedy', 'Chinese', '42.9');
+insert into movie values ('4', '老炮儿', '2015-12-24', '12:00:00', '137', '冯小刚', '张涵予/李易峰/吴亦凡', 'action', 'Chinese', '72');
+insert into movie values ('5', '极盗者', '2015-12-04', '12:00:00', '113', '埃里克松·科尔', '卢克·布雷西/泰丽莎·帕尔默', 'action', 'English', '52');
+insert into movie values ('6', '师父', '2015-12-10', '12:00:00', '109', '徐皓峰', '廖凡/宋佳/蒋雯丽', 'action', 'Chinese', '48');
+insert into movie values ('7', '海绵宝宝', '2015-12-01', '12:00:00', '92', '保罗·迪比特', '安东尼奥·班德拉斯/汤姆·肯尼', 'comedy', 'English', '48');
+insert into movie values ('8', '火星救援', '2015-11-25', '12:00:00', '144', '雷德利·斯科特', '马特·达蒙/杰西卡·查斯坦/克里斯丁·韦格', 'action', 'English', '48');
+insert into movie values ('9', '唐人街探案', '2015-12-31', '12:00:00', '135', '陈思诚', '王宝强/陈思诚/佟丽娅', 'comedy', 'Chinese', '48');
+insert into movie values ('10', '杜拉拉追婚记', '2015-12-04', '12:00:00', '101', '安竹间', '周渝民/林依晨/陈柏霖', 'comedy', 'Chinese', '48');
+
+
+drop table if exists movies_of_cinema;
+create table movies_of_cinema
+(
+	cinema_name VARCHAR(40) NOT NULL,
+    movie_id INT(30) NOT NULL,
+    primary key(cinema_name, movie_id)
+);
+
+drop table if exists userAccount;
+CREATE TABLE userAccount (
+    user_email VARCHAR(40) NOT NULL,
+    user_name VARCHAR(40) NOT NULL,
+    user_password VARCHAR(30) NOT NULL,
+    user_phone VARCHAR(20) NOT NULL,
+    user_permissions VARCHAR(15) CHECK (user_permissions IN ('admin' , 'normal')),
+    PRIMARY KEY (user_email)
+);
+
+insert into userAccount values ('jfdke@qq.com', '李易峰', '343ffdd', '12330001', 'admin');
+insert into userAccount values ('fdkj@qq.com', '王郁祥', 'erreeee', '12330002', 'admin');
+insert into userAccount values ('fdffdf@qq.com', '王伟子', 'qerere', '12330003',  'admin');
+insert into userAccount values ('axxxx@163.com', '庄涌临', '22333333', '12330004', 'admin');
+insert into userAccount values ('qwe@qq.com', '郭家桥', '232444d', '12330005', 'admin');
+insert into userAccount values ('pokeid@pku.edu.cn', 'abc', 'abc', '12213233',  'normal');
+insert into userAccount values ('ppppppoe@gmail.com', 'bcd', 'bcd', '12132423',  'normal');
+insert into userAccount values ('fertttt@google.com', 'cde', 'cde', '12444444', 'normal');
+insert into userAccount values ('wefienz@126.com', 'def', 'edf', '12333333', 'normal');
+insert into userAccount values ('uhijjdz@qq.com', 'efg', 'fge', '12220001', 'normal');
+insert into userAccount values ('naodongdakai1@qq.com', '张1', '000001','12306901','normal');
+insert into userAccount values ('naodongdakai2@qq.com', '张2', '000002','12306902','normal');
+insert into userAccount values ('naodongdakai3@qq.com', '张3', '000003','12306903','normal');
+insert into userAccount values ('naodongdakai4@qq.com', '张4', '000004','12306904','normal');
+insert into userAccount values ('naodongdakai5@qq.com', '张5', '000005','12306905','normal');
+insert into userAccount values ('naodongdakai6@qq.com', '张6', '000006','12306906','normal');
+insert into userAccount values ('naodongdakai7@qq.com', '张7', '000007','12306907','normal');
+insert into userAccount values ('naodongdakai8@qq.com', '张8', '000008','12306908','normal');
+insert into userAccount values ('naodongdakai9@qq.com', '张9', '000009','12306909','normal');
+insert into userAccount values ('naodongdakai10@qq.com', '张10', '000010','12306910','normal');
+insert into userAccount values ('naodongdakai11@qq.com', '张11', '000011','12306911','normal');
+insert into userAccount values ('naodongdakai12@qq.com', '张12', '000012','12306912','normal');
+insert into userAccount values ('naodongdakai13@qq.com', '张13', '000013','12306913','normal');
+insert into userAccount values ('naodongdakai14@qq.com', '张14', '000014','12306914','normal');
+insert into userAccount values ('naodongdakai15@qq.com', '张15', '000015','12306915','normal');
+insert into userAccount values ('naodongdakai16@qq.com', '张16', '000016','12306916','normal');
+insert into userAccount values ('naodongdakai17@qq.com', '张17', '000017','12306917','normal');
+insert into userAccount values ('naodongdakai18@qq.com', '张18', '000018','12306918','normal');
+insert into userAccount values ('naodongdakai19@qq.com', '张19', '000019','12306919','normal');
+insert into userAccount values ('naodongdakai20@qq.com', '张20', '000020','12306920','normal');
+insert into userAccount values ('naodongdakai21@qq.com', '张21', '000021','12306921','normal');
+insert into userAccount values ('naodongdakai22@qq.com', '张22', '000022','12306922','normal');
+insert into userAccount values ('naodongdakai23@qq.com', '张23', '000023','12306923','normal');
+insert into userAccount values ('naodongdakai24@qq.com', '张24', '000024','12306924','normal');
+insert into userAccount values ('naodongdakai25@qq.com', '张25', '000025','12306925','normal');
+insert into userAccount values ('naodongdakai26@qq.com', '张26', '000026','12306926','normal');
+insert into userAccount values ('naodongdakai27@qq.com', '张27', '000027','12306927','normal');
+insert into userAccount values ('naodongdakai28@qq.com', '张28', '000028','12306928','normal');
+insert into userAccount values ('naodongdakai29@qq.com', '张29', '000029','12306929','normal');
+insert into userAccount values ('naodongdakai30@qq.com', '张30', '000030','12306930','normal');
+insert into userAccount values ('naodongdakai31@qq.com', '张31', '000031','12306931','normal');
+insert into userAccount values ('naodongdakai32@qq.com', '张32', '000032','12306932','normal');
+insert into userAccount values ('naodongdakai33@qq.com', '张33', '000033','12306933','normal');
+insert into userAccount values ('naodongdakai34@qq.com', '张34', '000034','12306934','normal');
+insert into userAccount values ('naodongdakai35@qq.com', '张35', '000035','12306935','normal');
+insert into userAccount values ('naodongdakai36@qq.com', '张36', '000036','12306936','normal');
+insert into userAccount values ('naodongdakai37@qq.com', '张37', '000037','12306937','normal');
+insert into userAccount values ('naodongdakai38@qq.com', '张38', '000038','12306938','normal');
+insert into userAccount values ('naodongdakai39@qq.com', '张39', '000039','12306939','normal');
+insert into userAccount values ('naodongdakai40@qq.com', '张40', '000040','12306940','normal');
+
+
+
+drop table if exists ticket;
+CREATE TABLE ticket (
+    ticket_id INT(30) NOT NULL,
+    movie_id INT(30) NOT NULL,
+    cinema_name VARCHAR(40) NOT NULL,
+    show_date DATE NOT NULL,
+    show_time TIME NOT NULL,
+    room_no INT(10) NOT NULL,
+    seatx INT(10) NOT NULL,
+    seaty INT(10) NOT NULL,
+    price NUMERIC(4 , 2 ) NOT NULL,
+    PRIMARY KEY (ticket_id),
+    constraint movie_id1 FOREIGN KEY (movie_id)
+        REFERENCES movie(movie_id),
+    FOREIGN KEY (cinema_name , room_no)
+        REFERENCES room_of_cinema(cinema_name, room_no)
+);
+
+drop table if exists movieShow;
+CREATE TABLE movieShow (
+    cinema_name VARCHAR(40) NOT NULL,
+    movie_id INT(30) NOT NULL,
+    show_date DATE NOT NULL,
+    show_time TIME NOT NULL,
+    room_no INT(10) NOT NULL,
+    price NUMERIC(4 , 2 ) NOT NULL,
+    PRIMARY KEY (cinema_name , movie_id , show_date , show_time , room_no),
+    constraint cinema_name2 FOREIGN KEY (cinema_name)
+        REFERENCES cinema(cinema_name),
+    constraint movie_id2 FOREIGN KEY (movie_id)
+        REFERENCES movie(movie_id),
+    constraint roon_no2 FOREIGN KEY (room_no)
+        REFERENCES room(room_no)
+);
+
+insert into movieShow values ('美嘉欢乐影城', '1', '2015-12-20', '20:00:00', '1','48');
+insert into movieShow values ('美嘉欢乐影城', '2', '2015-12-20', '20:00:00', '2','56');
+insert into movieShow values ('金逸国际影城', '1', '2015-12-20', '20:00:00', '6','48');
+insert into movieShow values ('金逸国际影城', '2', '2015-12-20', '20:00:00', '7','56');
+insert into movieShow values ('工人文化宫', '1', '2015-12-20', '20:00:00', '11','48');
+insert into movieShow values ('工人文化宫', '2', '2015-12-20', '20:00:00', '12','56');
+insert into movieShow values ('UME国际影城', '1', '2015-12-20', '20:00:00', '16','48');
+insert into movieShow values ('UME国际影城', '2', '2015-12-20', '20:00:00', '17','56');
+insert into movieShow values ('星美影城', '1', '2015-12-20', '20:00:00', '21','48');
+insert into movieShow values ('星美影城', '2', '2015-12-20', '20:00:00', '22','56');
+
+
+ drop table if exists sellTickets;
+CREATE TABLE sellTickets (
+    ticket_id INT(30) NOT NULL,
+    cinema_name VARCHAR(40) NOT NULL,
+    movie_id INT(30) NOT NULL,
+    show_date DATE NOT NULL,
+    show_time TIME NOT NULL,
+    room_no INT(10) NOT NULL,
+    seatx INT(10) NOT NULL,
+    seaty INT(10) NOT NULL,
+    price NUMERIC(4 , 2 ) NOT NULL,
+    ifown int(1) check(ifown in ('0','1')),  /*‘0’未售出；‘1’售出*/
+    PRIMARY KEY (ticket_id , cinema_name , movie_id)
+   
+);
+
+create trigger seat_check after insert on sellTickets
+	referencing new row as nrow
+    for each row
+    when (nrow.seatx > 2 
+			and exists(select seatx, seaty, ifown
+						from sellTickets
+						where seatx = nrow.seatx - 1
+							and seaty = nrow.seaty
+                            and ifown = '0')
+			and exists(select seatx, seaty, ifown
+						from sellTickets
+						where seatx = nrow.seatx - 2
+							and seaty = nrow.seaty
+                            and ifown = '1')
+		)
+		and(nrow.seatx < 9
+			and exists(select seatx, seaty, ifown
+						from sellTickets
+						where seatx = nrow.seatx + 1
+							and seaty = nrow.seaty
+                            and ifown = '0')
+			and exists(select seatx, seaty, ifown
+						from sellTickets
+						where seatx = nrow.seatx + 2
+							and seaty = nrow.seaty
+                            and ifown = '1')
+		)
+    begin	
+		rollback
+	end;
+
+ 
