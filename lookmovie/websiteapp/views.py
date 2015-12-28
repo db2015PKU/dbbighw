@@ -571,6 +571,7 @@ CREATE TABLE ticket (
     room_no INT(10) NOT NULL,
     seatx INT(10) NOT NULL,
     seaty INT(10) NOT NULL,
+    price NUMERIC(4 , 2 ) NOT NULL,
     PRIMARY KEY (ticket_id),
     constraint movie_id1 FOREIGN KEY (movie_id)
         REFERENCES movie(movie_id),
@@ -617,9 +618,42 @@ CREATE TABLE sellTickets (
     room_no INT(10) NOT NULL,
     seatx INT(10) NOT NULL,
     seaty INT(10) NOT NULL,
+    price NUMERIC(4 , 2 ) NOT NULL,
+    ifown int(1) check(ifown in ('0','1')),  /*‘0’未售出；‘1’售出*/
     PRIMARY KEY (ticket_id , cinema_name , movie_id)
    
 );
+
+create trigger seat_check after insert on sellTickets
+    referencing new row as nrow
+    for each row
+    when (nrow.seatx > 2 
+            and exists(select seatx, seaty, ifown
+                        from sellTickets
+                        where seatx = nrow.seatx - 1
+                            and seaty = nrow.seaty
+                            and ifown = '0')
+            and exists(select seatx, seaty, ifown
+                        from sellTickets
+                        where seatx = nrow.seatx - 2
+                            and seaty = nrow.seaty
+                            and ifown = '1')
+        )
+        and(nrow.seatx < 9
+            and exists(select seatx, seaty, ifown
+                        from sellTickets
+                        where seatx = nrow.seatx + 1
+                            and seaty = nrow.seaty
+                            and ifown = '0')
+            and exists(select seatx, seaty, ifown
+                        from sellTickets
+                        where seatx = nrow.seatx + 2
+                            and seaty = nrow.seaty
+                            and ifown = '1')
+        )
+    begin   
+        rollback
+    end;
 '''
     cu.executescript(sql_str)
     cx.commit()
