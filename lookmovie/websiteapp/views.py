@@ -95,9 +95,7 @@ def user_ticket_history(request):
     }
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-def index(request):
-    return render(request, 'index.html')
-    
+
 def search_cinema_by_str(request):#按关键字搜索本地电影院
     search_str=u'美嘉'#request.GET['search_str']
     sql="select cinema_name from cinema where cinema_name like '%"+search_str+"%'"#差空位数

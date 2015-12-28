@@ -88,11 +88,14 @@ function indexCinema() {
 	var abovemean = 0;
 	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
 }
-function hottodayFilms() {
-	$.getJSON("/hottoday/", function (data) {
+function hottoday() {
+	$.getJSON("/search/movie/total/", function (data) {
 		$("#films").html("");
-		$.each(data.data, function (i, item) {		
-			var content = "<div class=\"filmEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"#\">" + item.movie_name + "</a></h3></div><div class=\"panel-body\"><p>上座率：" + item.sold_rate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">最低价/最高价：" + item.max_price + "/" + item.min_price + "</p></div></div></div>"});
+		$.each(data.data, function (i, item) {
+			console.log(item.movie_name);
+			var content = "<div class=\"filmEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"#\">" + item.movie_name + "</a></h3></div><div class=\"panel-body\"><p>上座率：" + item.sold_rate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">最低价/最高价：" + item.max_price + "/" + item.min_price + "</p></div></div></div>";
+
 			$("#films").append(content);
+		});
 	});
 }
