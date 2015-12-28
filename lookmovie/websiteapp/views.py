@@ -193,8 +193,8 @@ def search_cinema_by_movie(request):
     movie_name="万万"#request.POST['movie_name']
     sql="select cinema.cinema_name,cinema.estimate,cinema.district,cinema.road,cinema.busStation,movie.movie_name from (movies_of_cinema inner join movie on movies_of_cinema.movie_id = movie.movie_id) inner join cinema on movies_of_cinema.cinema_name = cinema.cinema_name  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数
     dbRes=sqlRead(sql)#返回了空
-    result={
-    "data":[
+
+    data = [
     {
         "cinema_name":"影院名1",
         "district":"行政区",
@@ -217,10 +217,8 @@ def search_cinema_by_movie(request):
         "availableTotal":15
     }
     ]
-}
-    return HttpResponse(json.dumps(result), content_type="application/json")
-
-
+    # return HttpResponse(json.dumps(result), content_type="application/json")
+    return render(request, 'search.html', {'data':data, 'movie_name':movie_name})
 
 def search_movie_total(request):#找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
 
