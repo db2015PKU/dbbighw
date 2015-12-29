@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>  
     <Cinema>
-        <CinemaName>美嘉</CinemaName>
+        <CinemaName>{{cinema.name}}</CinemaName>
         <Info>
             <BasicInfo>
                 <Location>
