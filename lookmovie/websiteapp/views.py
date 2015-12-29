@@ -86,6 +86,7 @@ def exit(request):
     del request.session['logined']
 
 def user_ticket_history(request):
+    user_email=""
     sql='''select '''
     result={
     "data":[
@@ -118,7 +119,7 @@ def search_cinema_by_district(request):
     method=0#int(request.POST['method'])
     abovemean=0#int(request.POST['abovemean'])
     if method==0:
-        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s'" % district
+        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s' order by estimate" % district
         dbRes=sqlRead(sql)
         result={"data":[{"cinema_name":x[0],"district":x[1],"road":x[2],"busStation":x[3],"businessHoursBegin":x[4],"businessHoursBegin":x[5]} for x in dbRes]}
         '''result={
