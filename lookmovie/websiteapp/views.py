@@ -86,14 +86,40 @@ def exit(request):
     del request.session['logined']
 
 def user_ticket_history(request):
-    sql='''select '''
-    result={
-    "data":[
-    {"cinema_name":"影院名1","movie_name":"电影名","room_no":"1","room_no":"2"},
-    {"cinema_name":"影院名2","movie_name":"电影名","room_no":"4","room_no":"3"}
+    data = [
+        {
+            "cinema_name": "影院1",
+            "movie_name": "电影名",
+            "room_no": 1,
+            "seats": [
+                {
+                    'x': 1,
+                    'y': 2
+                },
+                {
+                    'x': 1,
+                    'y': 3
+                }
+            ]
+        },
+        {
+            'cinema_name': '影院1',
+            'movie_name': '电影名',
+            'room_no': 1,
+            'seats': [
+                {
+                    'x': 1,
+                    'y': 2
+                },
+                {
+                    'x': 1,
+                    'y': 3
+                }
+            ]
+        }
     ]
-    }
-    return HttpResponse(json.dumps(result), content_type="application/json")
+    # return HttpResponse(json.dumps(result), content_type="application/json")
+    return render(request, 'history.html', {'data': data})
 
 
 def search_cinema_by_str(request):#按关键字搜索本地电影院
@@ -168,6 +194,7 @@ def search_cinema_by_district(request):
     "data":[
     {
         "cinema_name":"影院名1",
+        "url": "url_to_this_cinema",
         "district":"行政区1",
         "road":"所在街道",
         "busStation":"所在公交车站",
@@ -178,6 +205,33 @@ def search_cinema_by_district(request):
     },
     {
         "cinema_name":"影院名2",
+        "url": "url_to_this_cinema",
+        "district":"行政区2",
+        "road":"所在街道",
+        "busStation":"所在公交车站",
+        "businessHoursBegin":"11:00",
+        "businessHoursEnd":"12:00",
+        "seatsTotal":15
+    }
+    ]
+}
+        
+    result={
+    "data":[
+    {
+        "cinema_name":"影院名1",
+        "url": "url_to_this_cinema",
+        "district":"行政区1",
+        "road":"所在街道",
+        "busStation":"所在公交车站",
+        "businessHoursBegin":"10:00",
+        "businessHoursEnd":"12:00",
+        "seatsTotal":12
+
+    },
+    {
+        "cinema_name":"影院名2",
+        "url": "url-to-this-cinema",
         "district":"行政区2",
         "road":"所在街道",
         "busStation":"所在公交车站",
@@ -197,6 +251,7 @@ def search_cinema_by_movie(request):
     data = [
     {
         "cinema_name":"影院名1",
+        "url": "url_to_this_cinema",
         "district":"行政区",
         "road":"所在街道",
         "busStation":"所在公交车站",
@@ -208,6 +263,7 @@ def search_cinema_by_movie(request):
     },
     {
         "cinema_name":"影院名2",
+        "url": "url_to_this_cinema",
         "district":"行政区",
         "road":"所在街道",
         "busStation":"所在公交车站",
@@ -220,29 +276,10 @@ def search_cinema_by_movie(request):
     # return HttpResponse(json.dumps(result), content_type="application/json")
     return render(request, 'search.html', {'data':data, 'movie_name':movie_name})
 
-def search_movie_total(request):#找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
-
+def search_movie_total(request): #找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
     #等空位和票价信息增加
-    result={
-    "data":[
-       { 
-        "movie_name":"电影名1",
-        "sold_rate":0.55,
-        "max_price":100,
-        "min_price":50
-        
-    },
-    { 
-        "movie_name":"电影名2",
-        "sold_rate":0.7,
-        "max_price":90,
-        "min_price":40
-        
-    }
-  
-    ]   
-}
-    return HttpResponse(json.dumps(result), content_type="application/json")
+    data = [{"movie_name":"电影名1","sold_rate":0.55,"max_price":100,"min_price":50},{"movie_name":"电影名2","sold_rate":0.7,"max_price":90,"min_price":40}]
+    return render(request, 'hottoday.html', {'data': data, 'datastr': str(data)})
 
 def ticket(request):
     #ticket_id=request.GET['ticket_id']
@@ -255,17 +292,18 @@ def ticket(request):
 
 def index(request):
     return render(request, 'index.html')
-    
-def hottoday(request):
-    return render(request, 'hottoday.html')
 
 def cinema(request):
-    return render(request, 'cinema.html')
+    url = '/cinema_xml/'
+    return render(request, 'cinema.html', {'url': url})
 
 def hall(request):
+    seatmap:
     return render(request, 'hall.html')
 
 def cinema_xml(request):
+    # XML中Movie里添加放映厅url信息
+    data = []
     return render(request,'test.xml',content_type="application/xml")  
 
 

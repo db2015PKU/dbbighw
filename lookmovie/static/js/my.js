@@ -13,8 +13,8 @@ function choicesOnchange() {
 function changeCinemas(data) {
 	$("#cinemas").html("");
 	$.each(data.data, function (i, item) {
-		// console.log(item);
-		var content = "<div class=\"cinemaEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"/cinema/\">" + item.cinema_name + "</a></h3></div><div class=\"panel-body\"><p>评分：" + item.estimate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>营业时间：" + item.businessHoursBegin + "~" + item.businessHoursEnd + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>行政区：" + item.district + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>街道：" + item.road + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">公交站：" + item.busStation + "</p></div></div>";
+		console.log(item);
+		var content = "<div class=\"cinemaEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"" + item.url + "\">" + item.cinema_name + "</a></h3></div><div class=\"panel-body\"><p>评分：" + item.estimate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>营业时间：" + item.businessHoursBegin + "~" + item.businessHoursEnd + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>行政区：" + item.district + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p>街道：" + item.road + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">公交站：" + item.busStation + "</p></div></div>";
 		$("#cinemas").append(content);
 	});
 }
@@ -88,12 +88,23 @@ function indexCinema() {
 	var abovemean = 0;
 	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
 }
-function hottoday() {
-	$.getJSON("/search/movie/total/", function (data) {
+
+function getCinemaXML(url) {
+	$.get(url, function (xml) {
+		var cinema_name = $(xml).find("CinemaName").text();
+		var district = $(xml).find("District").text();
+		var road = $(xml).find("Road").text();
+		var busStation = $(xml).find("BusStation").text();
+		var phone = $(xml).find("Phone").text();
+		var businessHours = $(xml).find("BusinessHours").text();
+		var estimate = $(xml).find("Estimate").text();
+		$("#estimate").html("评分： " + estimate);
+		$("#phone").html("联系方式： " + phone);
+		$("#time").html("营业时间： " + businessHours);
+		$("#location").html("地址： " + district + "，" + road + "，" + busStation);
 		$("#films").html("");
-		$.each(data.data, function (i, item) {
-			console.log(item.movie_name);
-			var content = "<div class=\"filmEntry col-md-3\"><div class=\"panel panel-default\"><div class=\"panel-heading\"><h3 class=\"panel-title\"><a href=\"#\">" + item.movie_name + "</a></h3></div><div class=\"panel-body\"><p>上座率：" + item.sold_rate + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px\" /><p style=\"margin-bottom: 0px\">最低价/最高价：" + item.max_price + "/" + item.min_price + "</p></div></div></div>";
+		$(xml).find("Movie").each(function (i) {
+			var content = "<div class=\"filmEntry col-md-8 col-md-offset-2\"><div class=\"panel panel-default \"><div class=\"panel-heading \"><h3 class=\"panel-title \"><a href=\"" + $(this).children("url").text() + "\">" + $(this).children("Name").text() + "</a></h3></div><div class=\"panel-body \"><p>时间： " + $(this).children("Date").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p>价格： " + $(this).children("Price").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p>放映厅： " + $(this).children("Room").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p>时长： " + $(this).children("Runtime").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p>类别： " + $(this).children("Type").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p>语言： " + $(this).children("Language").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p>导演： " + $(this).children("Director").text() + "</p><hr style=\"margin-top: 10px; margin-bottom: 10px \" /><p style=\"margin-bottom: 0px \">主演： " + $(this).children("Actors").text() + "</p></div></div></div>";
 			$("#films").append(content);
 		});
 	});
