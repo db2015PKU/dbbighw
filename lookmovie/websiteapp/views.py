@@ -2,6 +2,7 @@
 #import MySQLdb
 from django.shortcuts import render
 from django.shortcuts import render_to_response
+from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.http import Http404
 from django.core.paginator import Paginator
@@ -40,12 +41,15 @@ def sqlWrite(sql_str):
     except Exception as e:
         return False
 
-def login(request):
+def login(request):#拿到正确返回值后前端似乎应该自己再重定向到首页？
     if request.method == 'GET':
-        return render(request, 'login.html')
+        if not request.session.has_key('logined') or not request.session['logined']:
+            return render(request, 'login.html')
+        else:
+            return HttpResponseRedirect('/')
     elif request.method == 'POST':
-        user_email=request.POST['user_email']
-        user_password=request.POST['user_password']
+        user_email='jfdke@qq.com'#request.POST['user_email']
+        user_password='343ffdd'#request.POST['user_password']
         sql="select user_email,user_password,user_permissions from userAccount where user_email = '%s'" % user_email
         print sql
         dbRes=sqlRead(sql)
@@ -64,14 +68,15 @@ def login(request):
         request.session['logined'] = result['logined']#初始化session
         return HttpResponse(json.dumps(result), content_type="application/json")
 
-def sign(request):
-    #user_name=request.GET['user_name']
-    #user_password=request.GET['user_password']
+def sign(request):#前端的值似乎没传好，user_email这个字段获取不到
     if request.method == 'GET':
-        return render(request, 'signup.html')
+        if not request.session.has_key('logined') or not request.session['logined']:
+             return render(request, 'signup.html')
+        else:
+            return HttpResponseRedirect('/')
     elif request.method == 'POST':
-        user_email="fdffdf@qq.com"#request.POST['user_email']
-        user_password="qeree"#request.POST['user_password']
+        user_email=request.POST['user_email']
+        user_password=request.POST['user_password']
         sql="insert into userAccount (user_email,user_password) values (%s,%s)" % (user_email,user_password)
         if sqlWrite(sql):
             result={'signed':True,'info':'success'}
@@ -84,6 +89,7 @@ def sign(request):
         
 def exit(request):
     del request.session['logined']
+    return render(request, 'signup.html')
 
 def user_ticket_history(request):
     data = [
@@ -244,41 +250,31 @@ def search_cinema_by_district(request):
 }
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-def search_cinema_by_movie(request):
-    movie_name="万万"#request.POST['movie_name']
-    sql="select cinema.cinema_name,cinema.estimate,cinema.district,cinema.road,cinema.busStation from (movies_of_cinema inner join movie on movies_of_cinema.movie_id = movie.movie_id) inner join cinema on movies_of_cinema.cinema_name = cinema.cinema_name  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数
-    dbRes=sqlRead(sql)#返回了空
-
+def search_cinema_by_movie(request):#tested
+    movie_name=request.GET['filmname']
+    sql="select cinema.cinema_name,cinema.cinema_id,cinema.district,cinema.road,cinema.busStation,cinema.estimate,cinema.businessHoursBegin,cinema.businessHoursEnd,movieShow.movie_id from (movieShow inner join movie on movieShow.movie_id = movie.movie_id) inner join cinema on movieShow.cinema_id = cinema.cinema_id  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数 再inner join一次票表
+    dbRes=sqlRead(sql)
+    seatSql='''select count(*) '''
     data = [
     {
-        "cinema_name":"影院名1",
-        "url": "url_to_this_cinema",
-        "district":"行政区",
-        "road":"所在街道",
-        "busStation":"所在公交车站",
-        "estimate":1.5,
-        "businessHoursBegin":"10:00",
-        "businessHoursEnd":"12:00",
+        "cinema_name":x[0],
+        "url": "/cinema/"+str(x[1]),
+        "district":x[2],
+        "road":x[3],
+        "busStation":x[4],
+        "estimate":x[5],
+        "businessHoursBegin":x[6],
+        "businessHoursEnd":x[7],
         "availableTotal":12
 
-    },
-    {
-        "cinema_name":"影院名2",
-        "url": "url_to_this_cinema",
-        "district":"行政区",
-        "road":"所在街道",
-        "busStation":"所在公交车站",
-        "estimate":1.2,
-        "businessHoursBegin":"11:00",
-        "businessHoursEnd":"12:00",
-        "availableTotal":15
-    }
+    } for x in dbRes
     ]
     # return HttpResponse(json.dumps(result), content_type="application/json")
     return render(request, 'search.html', {'data':data, 'movie_name':movie_name})
 
 def search_movie_total(request): #找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
     #等空位和票价信息增加
+
     data = [{"movie_name":"电影名1","sold_rate":0.55,"max_price":100,"min_price":50},{"movie_name":"电影名2","sold_rate":0.7,"max_price":90,"min_price":40}]
     return render(request, 'hottoday.html', {'data': data, 'datastr': str(data)})
 
@@ -292,9 +288,13 @@ def ticket(request):
 
 
 def index(request):
+    if not request.session.has_key('logined') or not request.session['logined']:
+        return render(request, 'signup.html')
     return render(request, 'index.html')
 
-def cinema(request,cinema_id):
+def cinema(request,cinema_id):#tested
+    if not request.session.has_key('logined') or not request.session['logined']:
+        return render(request, 'signup.html')
     url = '/cinema_xml/'+cinema_id
     return render(request, 'cinema.html', {'url': url})
 
@@ -304,7 +304,9 @@ def hall(request,room_no):
     price = 20 #单价
     return render(request, 'hall.html', {'seatmap': data, 'price': price})
 
-def cinema_xml(request,cinema_id):
+def cinema_xml(request,cinema_id):#tested
+    if not request.session.has_key('logined') or not request.session['logined']:
+        return render(request, 'signup.html')
     # XML中Movie里添加放映厅url信息
     #cinema_id="1"
     sql='''select cinema_name,district,road,busStation,phone,businessHoursBegin,businessHoursEnd,estimate from cinema where cinema_id = %d''' % int(cinema_id)
@@ -352,7 +354,6 @@ def create_db(request):
     cx = sqlite3.connect("mycinema.db")
     cu=cx.cursor()
     sql_str='''
-
 drop table if exists cinema;
 CREATE TABLE cinema (
     cinema_id INT(10) NOT NULL,
