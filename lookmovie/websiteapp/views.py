@@ -298,13 +298,14 @@ def cinema(request):
     return render(request, 'cinema.html', {'url': url})
 
 def hall(request):
-    seatmap:
-    return render(request, 'hall.html')
+    # 座位映射表，a表示available座位，u表示unavailable座位
+    data = ['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa']
+    price = 20 #单价
+    return render(request, 'hall.html', {'seatmap': data, 'price': price})
 
 def cinema_xml(request):
     # XML中Movie里添加放映厅url信息
-    data = []
-    return render(request,'test.xml',content_type="application/xml")  
+    return render(request,'test.xml',content_type="application/xml") 
 
 
 def create_db(request):

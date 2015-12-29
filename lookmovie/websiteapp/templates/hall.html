@@ -94,9 +94,14 @@
 	<script src="/static/js/my.js"></script>
 	<script>
 		$(document).ready(function(){
-			var price = 20;
+			var price = {{ price }};
+			var mapset = new Array();
+			{% for item in seatmap %}
+			mapset.push("{{item}}");
+			{% endfor %}
+			console.log(mapset);
 			var sc = $('#seat-map').seatCharts({
-				map: {{ seatmap }},
+				map: mapset,
 				seats: {
 					a: {
 						price: 50,
@@ -141,7 +146,6 @@
 					]
 				}
 			});
-			sc.get(['2_6', '1_7']).status('unavailable');
 		});
 	</script>
 </body>
