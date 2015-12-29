@@ -298,7 +298,7 @@ def cinema(request):
     url = '/cinema_xml/'
     return render(request, 'cinema.html', {'url': url})
 
-def hall(request):
+def hall(request,room_no):
     # 座位映射表，a表示available座位，u表示unavailable座位
     data = ['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa']
     price = 20 #单价
@@ -306,9 +306,45 @@ def hall(request):
 
 def cinema_xml(request):
     # XML中Movie里添加放映厅url信息
+    cinema_id="1"#request.GET['cinema_id']
+    sql='''select cinema_name,district,road,busStation,phone,businessHoursBegin,businessHoursEnd,estimate from cinema where cinema_id = %d''' % int(cinema_id)
+    dbRes=sqlRead(sql)
+    data = {
+    "cinema":{
+        "cinema_name":dbRes[0][0],
+        "district":dbRes[0][1],
+        "road":dbRes[0][2],
+        "busStation":dbRes[0][3],
+        "phone":dbRes[0][4],
+        "businessHours":dbRes[0][5]+'-'+dbRes[0][6],
+        "estimate":dbRes[0][7]
+        }
+    }
+    
+    sql='''select movie_name,movieShow.show_date,movieShow.show_time,runtime,director,actors,movie_type,movie_language,movieShow.room_no,movieShow.price from (movie left outer join movieShow on movie.movie_id = movieShow.movie_id)  where cinema_id = %d''' % int(cinema_id)
+    dbRes=sqlRead(sql)
+    data['movies']=[
+        {
+            "Name":x[0],
+            "Date":x[1]+' '+x[2],
+            "Runtime":x[3],
+            "Director":x[4],
+            "Actors":x[5],
+            "Type":x[6],
+            "Language":x[7],
+            "Room":x[8],
+            "Price":x[9]
 
-    data = []
-    return render(request,'cinema_info.xml',content_type="application/xml")  
+        }
+        for x in dbRes
+    ]
+
+
+    sql='''select room_no from room_of_cinema where cinema_id = %d''' % int(cinema_id)
+    dbRes=sqlRead(sql)
+    data['rooms']=[{"room_no":x[0]} for x in dbRes]
+
+    return render(request,'cinema_info.xml',data,content_type="application/xml")  
 
 
 
@@ -319,6 +355,7 @@ def create_db(request):
 
 drop table if exists cinema;
 CREATE TABLE cinema (
+    cinema_id INT(10) NOT NULL,
     cinema_name VARCHAR(40) NOT NULL,
     district VARCHAR(20) NOT NULL,
     road VARCHAR(20) NOT NULL,
@@ -327,26 +364,26 @@ CREATE TABLE cinema (
     businessHoursBegin TIME NOT NULL,
     businessHoursEnd TIME NOT NULL,
     estimate NUMERIC(2 , 1 ) CHECK (estimate > 0 AND estimate < 10),
-    PRIMARY KEY (cinema_name)
+    PRIMARY KEY (cinema_id)
 );
 
-insert into cinema values ('美嘉欢乐影城', '海淀区', '中关村大街', '中关村北站', '36370000', '08:30', '23:30', '7.0');
-insert into cinema values ('金逸国际影城', '海淀区', '中关村大街', '中关村北站', '36370001', '08:30', '23:30', '7.1');
-insert into cinema values ('工人文化宫', '石景山区', '万柳北街', '华府站', '36370002', '08:30', '23:30', '7.2');
-insert into cinema values ('UME国际影城', '海淀区', '科学院南路', '双安站', '36370003', '08:30', '23:30', '7.3');
-insert into cinema values ('星美影城', '海淀区', '远大路', '金源站', '36370004', '08:30', '23:30', '7.4');
-insert into cinema values ('五道口影院', '海淀区', '成府路', '五道口站', '36370005', '08:30', '23:30', '7.5');
-insert into cinema values ('新华影城', '海淀区', '成府路', '大钟寺站', '36370006', '08:30', '23:30', '7.6');
-insert into cinema values ('橙天嘉禾影城', '海淀区', '农大南路', '农大站', '36370007', '08:30', '23:30', '7.7');
-insert into cinema values ('嘉华影城', '海淀区', '学清路', '圣熙站', '36370008', '08:30', '23:30', '7.8');
-insert into cinema values ('17.5影城', '海淀区', '四道口路', '四道口站', '36370009', '08:30', '23:30', '7.9');
-insert into cinema values ('四季青影城', '海淀区', '西四环北路', '四季青桥站', '36370010', '08:30', '23:30', '8.0');
-insert into cinema values ('星汇聚影城', '海淀区', '海淀中街', '华润站', '36370011', '08:30', '23:30', '8.1');
-insert into cinema values ('万画影城', '海淀区', '西四环北路', '四清站', '36370012', '08:30', '23:30', '8.2');
-insert into cinema values ('天幕影城', '海淀区', '北三环中路', '中视站', '36370013', '08:30', '23:30', '8.3');
-insert into cinema values ('天宝国际影城', '朝阳区', '祁连街', '健翔站', '36370014', '08:30', '23:30', '8.4');
-insert into cinema values ('中影国际影城', '海淀区', '外大街', '新街口站', '36370015', '09:30', '23:00', '8.5');
-insert into cinema values ('大地影院', '海淀区', '越秀路', '同厦站', '36370016', '09:30', '23:00', '8.6');
+insert into cinema values ('1', '美嘉欢乐影城', '海淀区', '中关村大街', '中关村北站', '36370000', '08:30', '23:30', '7.0');
+insert into cinema values ('2', '金逸国际影城', '海淀区', '中关村大街', '中关村北站', '36370001', '08:30', '23:30', '7.1');
+insert into cinema values ('3', '工人文化宫', '石景山区', '万柳北街', '华府站', '36370002', '08:30', '23:30', '7.2');
+insert into cinema values ('4', 'UME国际影城', '海淀区', '科学院南路', '双安站', '36370003', '08:30', '23:30', '7.3');
+insert into cinema values ('5', '星美影城', '海淀区', '远大路', '金源站', '36370004', '08:30', '23:30', '7.4');
+insert into cinema values ('6', '五道口影院', '海淀区', '成府路', '五道口站', '36370005', '08:30', '23:30', '7.5');
+insert into cinema values ('7', '新华影城', '海淀区', '成府路', '大钟寺站', '36370006', '08:30', '23:30', '7.6');
+insert into cinema values ('8', '橙天嘉禾影城', '海淀区', '农大南路', '农大站', '36370007', '08:30', '23:30', '7.7');
+insert into cinema values ('9', '嘉华影城', '海淀区', '学清路', '圣熙站', '36370008', '08:30', '23:30', '7.8');
+insert into cinema values ('10', '17.5影城', '海淀区', '四道口路', '四道口站', '36370009', '08:30', '23:30', '7.9');
+insert into cinema values ('11', '四季青影城', '海淀区', '西四环北路', '四季青桥站', '36370010', '08:30', '23:30', '8.0');
+insert into cinema values ('12', '星汇聚影城', '海淀区', '海淀中街', '华润站', '36370011', '08:30', '23:30', '8.1');
+insert into cinema values ('13', '万画影城', '海淀区', '西四环北路', '四清站', '36370012', '08:30', '23:30', '8.2');
+insert into cinema values ('14', '天幕影城', '海淀区', '北三环中路', '中视站', '36370013', '08:30', '23:30', '8.3');
+insert into cinema values ('15', '天宝国际影城', '朝阳区', '祁连街', '健翔站', '36370014', '08:30', '23:30', '8.4');
+insert into cinema values ('16', '中影国际影城', '海淀区', '外大街', '新街口站', '36370015', '09:30', '23:00', '8.5');
+insert into cinema values ('17', '大地影院', '海淀区', '越秀路', '同厦站', '36370016', '09:30', '23:00', '8.6');
 
 drop table if exists room;
 CREATE TABLE room (
@@ -460,42 +497,42 @@ insert into room values ('100', '10', '10');
 
 drop table if exists room_of_cinema;
 CREATE TABLE room_of_cinema (
-    cinema_name VARCHAR(40) NOT NULL,
+    cinema_id int(10) NOT NULL,
     room_no INT(10) NOT NULL,
-    PRIMARY KEY (cinema_name , room_no),
-    constraint cinema_name1 FOREIGN KEY (cinema_name)
-        REFERENCES cinema (cinema_name)
-        on delete cascade,
-    constraint room_no1 foreign key (room_no)
-        REFERENCES room(room_no)
-        on delete cascade
+    PRIMARY KEY (cinema_id , room_no),
+    CONSTRAINT cinema_id1 FOREIGN KEY (cinema_id)
+        REFERENCES cinema (cinema_id)
+        ON DELETE CASCADE,
+    CONSTRAINT room_no1 FOREIGN KEY (room_no)
+        REFERENCES room (room_no)
+        ON DELETE CASCADE
 );
 
-insert into room_of_cinema values ('美嘉欢乐影城', '1');
-insert into room_of_cinema values ('美嘉欢乐影城', '2');
-insert into room_of_cinema values ('美嘉欢乐影城', '3');
-insert into room_of_cinema values ('美嘉欢乐影城', '4');
-insert into room_of_cinema values ('美嘉欢乐影城', '5');
-insert into room_of_cinema values ('金逸国际影城', '6');
-insert into room_of_cinema values ('金逸国际影城', '7');
-insert into room_of_cinema values ('金逸国际影城', '8');
-insert into room_of_cinema values ('金逸国际影城', '9');
-insert into room_of_cinema values ('金逸国际影城', '10');
-insert into room_of_cinema values ('工人文化宫', '11');
-insert into room_of_cinema values ('工人文化宫', '12');
-insert into room_of_cinema values ('工人文化宫', '13');
-insert into room_of_cinema values ('工人文化宫', '14');
-insert into room_of_cinema values ('工人文化宫', '15');
-insert into room_of_cinema values ('UME国际影城', '16');
-insert into room_of_cinema values ('UME国际影城', '17');
-insert into room_of_cinema values ('UME国际影城', '18');
-insert into room_of_cinema values ('UME国际影城', '19');
-insert into room_of_cinema values ('UME国际影城', '20');
-insert into room_of_cinema values ('星美影城', '21');
-insert into room_of_cinema values ('星美影城', '22');
-insert into room_of_cinema values ('星美影城', '23');
-insert into room_of_cinema values ('星美影城', '24');
-insert into room_of_cinema values ('星美影城', '25');
+insert into room_of_cinema values ('1', '1');
+insert into room_of_cinema values ('1', '2');
+insert into room_of_cinema values ('1', '3');
+insert into room_of_cinema values ('1', '4');
+insert into room_of_cinema values ('1', '5');
+insert into room_of_cinema values ('2', '6');
+insert into room_of_cinema values ('2', '7');
+insert into room_of_cinema values ('2', '8');
+insert into room_of_cinema values ('2', '9');
+insert into room_of_cinema values ('2', '10');
+insert into room_of_cinema values ('3', '11');
+insert into room_of_cinema values ('3', '12');
+insert into room_of_cinema values ('3', '13');
+insert into room_of_cinema values ('3', '14');
+insert into room_of_cinema values ('3', '15');
+insert into room_of_cinema values ('4', '16');
+insert into room_of_cinema values ('4', '17');
+insert into room_of_cinema values ('4', '18');
+insert into room_of_cinema values ('4', '19');
+insert into room_of_cinema values ('4', '20');
+insert into room_of_cinema values ('5', '21');
+insert into room_of_cinema values ('5', '22');
+insert into room_of_cinema values ('5', '23');
+insert into room_of_cinema values ('5', '24');
+insert into room_of_cinema values ('5', '25');
 
  
 drop table if exists movie;
@@ -530,11 +567,10 @@ insert into movie values ('10', '杜拉拉追婚记', '2015-12-04', '12:00:00', 
 
 
 drop table if exists movies_of_cinema;
-create table movies_of_cinema
-(
-    cinema_name VARCHAR(40) NOT NULL,
+CREATE TABLE movies_of_cinema (
+    cinema_id INT(10) NOT NULL,
     movie_id INT(30) NOT NULL,
-    primary key(cinema_name, movie_id)
+    PRIMARY KEY (cinema_id , movie_id)
 );
 
 drop table if exists userAccount;
@@ -604,7 +640,7 @@ drop table if exists ticket;
 CREATE TABLE ticket (
     ticket_id INT(30) NOT NULL,
     movie_id INT(30) NOT NULL,
-    cinema_name VARCHAR(40) NOT NULL,
+    cinema_id INT(10) NOT NULL,
     show_date DATE NOT NULL,
     show_time TIME NOT NULL,
     room_no INT(10) NOT NULL,
@@ -612,45 +648,45 @@ CREATE TABLE ticket (
     seaty INT(10) NOT NULL,
     price NUMERIC(4 , 2 ) NOT NULL,
     PRIMARY KEY (ticket_id),
-    constraint movie_id1 FOREIGN KEY (movie_id)
-        REFERENCES movie(movie_id),
-    FOREIGN KEY (cinema_name , room_no)
-        REFERENCES room_of_cinema(cinema_name, room_no)
+    CONSTRAINT movie_id1 FOREIGN KEY (movie_id)
+        REFERENCES movie (movie_id),
+    FOREIGN KEY (cinema_id , room_no)
+        REFERENCES room_of_cinema (cinema_id , room_no)
 );
 
 drop table if exists movieShow;
 CREATE TABLE movieShow (
-    cinema_name VARCHAR(40) NOT NULL,
+    cinema_id INT(10) NOT NULL,
     movie_id INT(30) NOT NULL,
     show_date DATE NOT NULL,
     show_time TIME NOT NULL,
     room_no INT(10) NOT NULL,
     price NUMERIC(4 , 2 ) NOT NULL,
-    PRIMARY KEY (cinema_name , movie_id , show_date , show_time , room_no),
-    constraint cinema_name2 FOREIGN KEY (cinema_name)
-        REFERENCES cinema(cinema_name),
-    constraint movie_id2 FOREIGN KEY (movie_id)
-        REFERENCES movie(movie_id),
-    constraint roon_no2 FOREIGN KEY (room_no)
-        REFERENCES room(room_no)
+    PRIMARY KEY (cinema_id , movie_id , show_date , show_time , room_no),
+    CONSTRAINT cinema_id2 FOREIGN KEY (cinema_id)
+        REFERENCES cinema (cinema_id),
+    CONSTRAINT movie_id2 FOREIGN KEY (movie_id)
+        REFERENCES movie (movie_id),
+    CONSTRAINT roon_no2 FOREIGN KEY (room_no)
+        REFERENCES room (room_no)
 );
 
-insert into movieShow values ('美嘉欢乐影城', '1', '2015-12-20', '20:00:00', '1','48');
-insert into movieShow values ('美嘉欢乐影城', '2', '2015-12-20', '20:00:00', '2','56');
-insert into movieShow values ('金逸国际影城', '1', '2015-12-20', '20:00:00', '6','48');
-insert into movieShow values ('金逸国际影城', '2', '2015-12-20', '20:00:00', '7','56');
-insert into movieShow values ('工人文化宫', '1', '2015-12-20', '20:00:00', '11','48');
-insert into movieShow values ('工人文化宫', '2', '2015-12-20', '20:00:00', '12','56');
-insert into movieShow values ('UME国际影城', '1', '2015-12-20', '20:00:00', '16','48');
-insert into movieShow values ('UME国际影城', '2', '2015-12-20', '20:00:00', '17','56');
-insert into movieShow values ('星美影城', '1', '2015-12-20', '20:00:00', '21','48');
-insert into movieShow values ('星美影城', '2', '2015-12-20', '20:00:00', '22','56');
+insert into movieShow values ('1', '1', '2015-12-20', '20:00:00', '1','48');
+insert into movieShow values ('1', '2', '2015-12-20', '20:00:00', '2','56');
+insert into movieShow values ('2', '1', '2015-12-20', '20:00:00', '6','48');
+insert into movieShow values ('2', '2', '2015-12-20', '20:00:00', '7','56');
+insert into movieShow values ('3', '1', '2015-12-20', '20:00:00', '11','48');
+insert into movieShow values ('3', '2', '2015-12-20', '20:00:00', '12','56');
+insert into movieShow values ('4', '1', '2015-12-20', '20:00:00', '16','48');
+insert into movieShow values ('4', '2', '2015-12-20', '20:00:00', '17','56');
+insert into movieShow values ('5', '1', '2015-12-20', '20:00:00', '21','48');
+insert into movieShow values ('5', '2', '2015-12-20', '20:00:00', '22','56');
 
 
  drop table if exists sellTickets;
 CREATE TABLE sellTickets (
     ticket_id INT(30) NOT NULL,
-    cinema_name VARCHAR(40) NOT NULL,
+    cinema_id INT(10) NOT NULL,
     movie_id INT(30) NOT NULL,
     show_date DATE NOT NULL,
     show_time TIME NOT NULL,
@@ -658,41 +694,17 @@ CREATE TABLE sellTickets (
     seatx INT(10) NOT NULL,
     seaty INT(10) NOT NULL,
     price NUMERIC(4 , 2 ) NOT NULL,
-    ifown int(1) check(ifown in ('0','1')),  /*‘0’未售出；‘1’售出*/
-    PRIMARY KEY (ticket_id , cinema_name , movie_id)
-   
+    ifown INT(1) CHECK (ifown IN ('0' , '1')),
+    PRIMARY KEY (ticket_id , cinema_id , movie_id)
 );
 
-create trigger seat_check after insert on sellTickets
-    referencing new row as nrow
-    for each row
-    when (nrow.seatx > 2 
-            and exists(select seatx, seaty, ifown
-                        from sellTickets
-                        where seatx = nrow.seatx - 1
-                            and seaty = nrow.seaty
-                            and ifown = '0')
-            and exists(select seatx, seaty, ifown
-                        from sellTickets
-                        where seatx = nrow.seatx - 2
-                            and seaty = nrow.seaty
-                            and ifown = '1')
-        )
-        and(nrow.seatx < 9
-            and exists(select seatx, seaty, ifown
-                        from sellTickets
-                        where seatx = nrow.seatx + 1
-                            and seaty = nrow.seaty
-                            and ifown = '0')
-            and exists(select seatx, seaty, ifown
-                        from sellTickets
-                        where seatx = nrow.seatx + 2
-                            and seaty = nrow.seaty
-                            and ifown = '1')
-        )
-    begin   
-        rollback
-    end;
+
+
+    
+        
+ 
+
+
 '''
     cu.executescript(sql_str)
     cx.commit()

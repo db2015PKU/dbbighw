@@ -32,5 +32,5 @@ urlpatterns = [
     #url(r'^hottoday/', 'websiteapp.views.hottoday', name='hottoday'),
     url(r'^cinema/', 'websiteapp.views.cinema', name='cinema'),
     url(r'^cinema_xml/', 'websiteapp.views.cinema_xml', name='cinema_xml'),
-    url(r'^hall/', 'websiteapp.views.hall', name='hall'),
+    url(r'^hall/(\d+)', 'websiteapp.views.hall', name='hall'),
 ]
