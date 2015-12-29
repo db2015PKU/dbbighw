@@ -246,7 +246,7 @@ def search_cinema_by_district(request):
 
 def search_cinema_by_movie(request):
     movie_name="万万"#request.POST['movie_name']
-    sql="select cinema.cinema_name,cinema.estimate,cinema.district,cinema.road,cinema.busStation,movie.movie_name from (movies_of_cinema inner join movie on movies_of_cinema.movie_id = movie.movie_id) inner join cinema on movies_of_cinema.cinema_name = cinema.cinema_name  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数
+    sql="select cinema.cinema_name,cinema.estimate,cinema.district,cinema.road,cinema.busStation from (movies_of_cinema inner join movie on movies_of_cinema.movie_id = movie.movie_id) inner join cinema on movies_of_cinema.cinema_name = cinema.cinema_name  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数
     dbRes=sqlRead(sql)#返回了空
 
     data = [
@@ -294,8 +294,8 @@ def ticket(request):
 def index(request):
     return render(request, 'index.html')
 
-def cinema(request):
-    url = '/cinema_xml/'
+def cinema(request,cinema_id):
+    url = '/cinema_xml/'+cinema_id
     return render(request, 'cinema.html', {'url': url})
 
 def hall(request,room_no):
@@ -304,9 +304,9 @@ def hall(request,room_no):
     price = 20 #单价
     return render(request, 'hall.html', {'seatmap': data, 'price': price})
 
-def cinema_xml(request):
+def cinema_xml(request,cinema_id):
     # XML中Movie里添加放映厅url信息
-    cinema_id="1"#request.GET['cinema_id']
+    #cinema_id="1"
     sql='''select cinema_name,district,road,busStation,phone,businessHoursBegin,businessHoursEnd,estimate from cinema where cinema_id = %d''' % int(cinema_id)
     dbRes=sqlRead(sql)
     data = {
