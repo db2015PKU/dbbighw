@@ -44,8 +44,8 @@ def login(request):
     if request.method == 'GET':
         return render(request, 'login.html')
     elif request.method == 'POST':
-        user_email="fdffdf@qq.com"#request.POST['user_email']
-        user_password="qerere"#request.POST['user_password']
+        user_email=request.POST['user_email']
+        user_password=request.POST['user_password']
         sql="select user_email,user_password,user_permissions from userAccount where user_email = '%s'" % user_email
         print sql
         dbRes=sqlRead(sql)
@@ -306,7 +306,10 @@ def hall(request):
 
 def cinema_xml(request):
     # XML中Movie里添加放映厅url信息
-    return render(request,'test.xml',content_type="application/xml") 
+
+    data = []
+    return render(request,'cinema_info.xml',content_type="application/xml")  
+
 
 
 def create_db(request):
