@@ -18,23 +18,20 @@
                     <Movie>
                         <Name>{{movie.Name}}</Name>
                         <Date>{{movie.Date}}</Date>
+                        <Time>{{movie.Time}}</Time>
                         <Runtime>{{movie.Runtime}}</Runtime>
                         <Director>{{movie.Director}}</Director>
                         <Actors>{{movie.Actors}}</Actors>
                         <Type>{{movie.Type}}</Type>
                         <Language>{{movie.Language}}</Language>
                         <Room>{{movie.Room}}</Room>
+                        <RoomUrl>{{movie.RoomUrl}}</RoomUrl>
                         <Price>{{movie.Price}}</Price>
                     </Movie>
                     {% endfor %}
 
                 </Movies>
-                <Rooms>
-                    {% for room in rooms %}
-                    <RoomUrl>{% url 'hall' room.room_no %}</RoomUrl>
-                    {% endfor %}
 
-                </Rooms>
             </OtherInfo>
         </Info>
 

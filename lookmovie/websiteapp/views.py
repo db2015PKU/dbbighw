@@ -87,16 +87,36 @@ def sign(request):#前端的值似乎没传好，user_email这个字段获取不
         #result={'signed':True,'info':'success'}
         return HttpResponse(json.dumps(result), content_type="application/json")
         
-def exit(request):
+def exit(request):#tested
     del request.session['logined']
     return render(request, 'signup.html')
 
-def user_ticket_history(request):
+def user_ticket_history(request,user_id):#complete但没有数据可以测试
+    sql='''select cinema_name,movie_name,room_no,sellTickets.show_date,sellTickets.show_time from (sellTickets left outer join cinema on sellTickets.cinema_id = cinema.cinema_id) left outer join movie on sellTickets.movie_id = movie.movie_id where user_id = %s''' % user_id
+    dbRes=sqlRead(sql)
+    data=[
+        {
+            "cinema_name": x[0],
+            "movie_name": x[1],
+            "room_no":x[2],
+            "show_date":x[3],
+            "show_time":x[4],
+            
+        }
+        for x in dbRes
+    ]
+    for row in data:
+        sql='''select seatx,seaty from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (row['room_no'],row['show_date'],row['show_time'])
+        dbRes=sqlRead(sql)
+        row['seats']=[{'x':x[0],'y':x[1]} for x in dbRes]
+    '''返回示例
     data = [
         {
             "cinema_name": "影院1",
             "movie_name": "电影名",
             "room_no": 1,
+            "show_date":'2015-10-10',
+            "show_time":'20:00:00',
             "seats": [
                 {
                     'x': 1,
@@ -112,6 +132,8 @@ def user_ticket_history(request):
             'cinema_name': '影院1',
             'movie_name': '电影名',
             'room_no': 1,
+            "show_date":'2015-10-10',
+            "show_time":'20:00:00',
             'seats': [
                 {
                     'x': 1,
@@ -124,36 +146,59 @@ def user_ticket_history(request):
             ]
         }
 
-    ]
+    ]'''
     # return HttpResponse(json.dumps(result), content_type="application/json")
     return render(request, 'history.html', {'data': data})
 
 
-def search_cinema_by_str(request):#按关键字搜索本地电影院
-    search_str=u'美嘉'#request.GET['search_str']
-    sql="select cinema_name from cinema where cinema_name like '%"+search_str+"%'"#差空位数
-    dbRes=sqlRead(sql)
-    result={"data":[{"cinema_name":x[0]} for x in dbRes]}
-    #result={"data":[{"cinema_name":"影院名1"},
-    #{"cinema_name":"影院名2"}]}
-    return HttpResponse(json.dumps(result), content_type="application/json")
 
-District_dict={'0':"海淀区"}
-def search_cinema_by_district(request):
+District_dict={
+    '1':"东城区",
+    '2':"西城区",
+    '3':"朝阳区",
+    '4':"海淀区",
+    '5':"丰台区",
+    '6':"石景山区",
+    '7':"门头沟区",
+    '8':"房山区",
+    '9':"大兴区",
+    '10':"通州区",
+    '11':"顺义区",
+    '12':"昌平区",
+    '13':"平谷区",
+    '14':"怀柔区",
+    '15':"密云县",
+    '16':"延庆县",
+    }
+def search_cinema_by_district(request):#3种按行政区搜索电影院
     '''
     "district_no":"行政区编号,0表示全部，1~16为北京的16个行政区",
-    "method": "排序方法，0为按综合排序（空座位+评分），1为按照空位，即 method为0时按综合排序给出普通搜索的结果，如果method为1  再根据abovemean是0还是1定",
+    "method": "排序方法，0为按综合排序（评分），且不返回空位数；1为按照空位，即 method为0时按综合排序给出普通搜索的结果，如果method为1  再根据abovemean是0还是1定",
     "abovemean":"在method为1的情况下，0返回空位最高的，1返回空位高于平均"
     '''
-    district_no='0'#request.POST['district_no']
+    district_no='4'#request.POST['district_no']
     district=District_dict[district_no]
 
-    method=0#int(request.POST['method'])
+    method=1#int(request.POST['method'])
     abovemean=0#int(request.POST['abovemean'])
-    if method==0:
-        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s' order by estimate" % district
+    if method==0:#tested
+        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate,cinema_id  from cinema where district = '%s' order by estimate" % district
         dbRes=sqlRead(sql)
-        result={"data":[{"cinema_name":x[0],"district":x[1],"road":x[2],"busStation":x[3],"businessHoursBegin":x[4],"businessHoursBegin":x[5]} for x in dbRes]}
+        result={"data":[
+        {
+            "cinema_name":x[0],
+            "district":x[1],
+            "road":x[2],
+            "busStation":x[3],
+            "businessHoursBegin":x[4],
+            "businessHoursBegin":x[5],
+            "estimate":x[6],
+           
+        } 
+            for x in dbRes]
+        }
+
+
         '''result={
         "data":[
         {
@@ -178,10 +223,43 @@ def search_cinema_by_district(request):
         }
         ]
     }'''
-    elif method==1 and abovemean==0:
-        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s'" % district
-        dbRes=sqlRead(sql)#等空位
+    elif method==1:#买票数据部分因为没有数据无法测试，其他测试正常
+        #空位计算方式：先看某个电影院放映的电影场次有哪些，每个场次在哪个放映厅放映，根据放映厅最大座位数与现已出售票的数目只差确定空位数
+        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate,cinema_id from cinema where district = '%s'" % district
+        dbRes=sqlRead(sql)
         result={
+        "data":[
+            {
+                "cinema_name":x[0],
+                "district":x[1],
+                "road":x[2],
+                "busStation":x[3],
+                "businessHoursBegin":x[4],
+                "businessHoursBegin":x[5],
+                "estimate":x[6],
+                "cinema_id":x[7]
+            }
+            for x in dbRes]
+        }
+        for row in result['data']:
+            sql='''select room_no,show_date,show_time from movieShow where cinema_id = %d''' % row['cinema_id']
+            dbRes=sqlRead(sql)
+            availableTotal=0
+            for subrow in dbRes:
+                room_no=subrow[0]
+                show_date=subrow[1]
+                show_time=subrow[2]
+                sql='''select seatx_max,seaty_max from room where room_no = %s''' % room_no
+                roomRes=sqlRead(sql)
+                availableTotal+=int(roomRes[0][0])*int(roomRes[0][1])
+                sql='''select count(*) from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (room_no,show_date,show_time)
+                countRes=sqlRead(sql)
+                availableTotal-=countRes[0][0]
+            row["seatsAvailTotal"]=availableTotal
+        result['data']=sorted(result['data'],lambda x,y:cmp(x['seatsAvailTotal'],y['seatsAvailTotal']),reverse=True)
+        if abovemean==0:#tested
+            result['data']=[result['data'][0]]
+            '''result={
         "data":[
             {
                 "cinema_name":"影院名",
@@ -193,68 +271,33 @@ def search_cinema_by_district(request):
                 "seatsAvailTotal":20
             }
         ]
-    }
-    elif method==1 and abovemean==1:
-        sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate  from cinema where district = '%s'" % district
-        dbRes=sqlRead(sql)#等空位
-        result={
-    "data":[
-    {
-        "cinema_name":"影院名1",
-        "url": "url_to_this_cinema",
-        "district":"行政区1",
-        "road":"所在街道",
-        "busStation":"所在公交车站",
-        "businessHoursBegin":"10:00",
-        "businessHoursEnd":"12:00",
-        "seatsTotal":12
-
-    },
-    {
-        "cinema_name":"影院名2",
-        "url": "url_to_this_cinema",
-        "district":"行政区2",
-        "road":"所在街道",
-        "busStation":"所在公交车站",
-        "businessHoursBegin":"11:00",
-        "businessHoursEnd":"12:00",
-        "seatsTotal":15
-    }
-    ]
-}
+    }'''
+        elif abovemean==1:#tested
+            mean=sum(map(lambda x:x['seatsAvailTotal'],result['data']))/float(len(result['data']))
+            result['data']=[x for x in result['data'] if x['seatsAvailTotal']>=mean]
+            result['mean']=mean
+            '''result={
+        "data":[
+            {
+                "cinema_name":"影院名",
+                "district":"行政区2",
+                "road":"所在街道",
+                "busStation":"所在公交车站",
+                "businessHoursBegin":"10:00",
+                "businessHoursEnd":"12:00",
+                "seatsAvailTotal":20
+            }
+        ],
+        "mean":53
+    }'''
         
-    result={
-    "data":[
-    {
-        "cinema_name":"影院名1",
-        "url": "url_to_this_cinema",
-        "district":"行政区1",
-        "road":"所在街道",
-        "busStation":"所在公交车站",
-        "businessHoursBegin":"10:00",
-        "businessHoursEnd":"12:00",
-        "seatsTotal":12
-
-    },
-    {
-        "cinema_name":"影院名2",
-        "url": "url-to-this-cinema",
-        "district":"行政区2",
-        "road":"所在街道",
-        "busStation":"所在公交车站",
-        "businessHoursBegin":"11:00",
-        "businessHoursEnd":"12:00",
-        "seatsTotal":15
-    }
-    ]
-}
+    
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-def search_cinema_by_movie(request):#tested
+def search_cinema_by_movie(request):#返回的字典数值tested，render未测试
     movie_name=request.GET['filmname']
-    sql="select cinema.cinema_name,cinema.cinema_id,cinema.district,cinema.road,cinema.busStation,cinema.estimate,cinema.businessHoursBegin,cinema.businessHoursEnd,movieShow.movie_id from (movieShow inner join movie on movieShow.movie_id = movie.movie_id) inner join cinema on movieShow.cinema_id = cinema.cinema_id  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"#差空位数 再inner join一次票表
+    sql="select cinema.cinema_name,cinema.cinema_id,cinema.district,cinema.road,cinema.busStation,cinema.estimate,cinema.businessHoursBegin,cinema.businessHoursEnd,movieShow.room_no,movieShow.show_date,movieShow.show_time from (movieShow inner join movie on movieShow.movie_id = movie.movie_id) inner join cinema on movieShow.cinema_id = cinema.cinema_id  where movie.movie_name like '%"+movie_name+"%' order by cinema.estimate"
     dbRes=sqlRead(sql)
-    seatSql='''select count(*) '''
     data = [
     {
         "cinema_name":x[0],
@@ -265,21 +308,89 @@ def search_cinema_by_movie(request):#tested
         "estimate":x[5],
         "businessHoursBegin":x[6],
         "businessHoursEnd":x[7],
-        "availableTotal":12
+        "room_no":x[8],
+        "show_date":x[9],
+        "show_time":x[10]
 
     } for x in dbRes
     ]
-    # return HttpResponse(json.dumps(result), content_type="application/json")
+    for row in data:
+        sql='''select seatx_max,seaty_max from room where room_no = %s''' % row['room_no']
+        dbRes=sqlRead(sql)
+        availableTotal=int(dbRes[0][0])*int(dbRes[0][1])
+        sql='''select count(*) from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (row['room_no'],row['show_date'],row['show_time'])
+        countRes=sqlRead(sql)
+        availableTotal-=countRes[0][0]
+        row["availableTotal"]=availableTotal
+    data=sorted(data,lambda x,y:cmp(x['estimate']*10+x['availableTotal'],y['estimate']*10+y['availableTotal']),reverse=True)#综合排名依据：x['estimate']*10+x['availableTotal']
+
+
+
+
+    #return HttpResponse(json.dumps(data), content_type="application/json")
     return render(request, 'search.html', {'data':data, 'movie_name':movie_name})
 
-def search_movie_total(request): #找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
+def search_movie_total(request): #tested
+#找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
     #等空位和票价信息增加
+    sql='''select distinct movieShow.movie_id,movie_name from movieShow left outer join movie on movieShow.movie_id = movie.movie_id'''
+    dbRes=sqlRead(sql)
+    data=[
+        {
+            "movie_id":x[0],
+            "movie_name":x[1],
+            
+        }
+        for x in dbRes
+    ]
+    for row in data:
+        sql='''select max(price),min(price) from movieShow where movie_id = %s ''' % row['movie_id']
+        dbRes=sqlRead(sql)
+        row['max_price']=dbRes[0][0]
+        row['min_price']=dbRes[0][1]
+        sql='''select room_no,show_date,show_time from movieShow where movie_id = %s ''' % row['movie_id']
+        total=0
+        sold=0
+        Res=sqlRead(sql)
+        for subrow in Res:
+            room_no=subrow[0]
+            show_date=subrow[1]
+            show_time=subrow[2]
+            sql='''select seatx_max,seaty_max from room where room_no = %s''' % room_no
+            roomRes=sqlRead(sql)
+            total+=int(roomRes[0][0])*int(roomRes[0][1])
+            sql='''select count(*) from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (room_no,show_date,show_time)
+            soldRes=sqlRead(sql)
+            sold+=soldRes[0][0]
+        row['sold_rate']=float(sold)/total
 
-    data = [{"movie_name":"电影名1","sold_rate":0.55,"max_price":100,"min_price":50},{"movie_name":"电影名2","sold_rate":0.7,"max_price":90,"min_price":40}]
+
+
+
+    #data = [{"movie_name":"电影名1","sold_rate":0.55,"max_price":100,"min_price":50},{"movie_name":"电影名2","sold_rate":0.7,"max_price":90,"min_price":40}]
     return render(request, 'hottoday.html', {'data': data, 'datastr': str(data)})
 
-def ticket(request):
-    #ticket_id=request.GET['ticket_id']
+def ticket(request):#complete but without test
+    user_id=request.POST['user_id']
+    cinema_id=request.POST['cinema_id']
+    movie_id=request.POST['movie_id']
+    show_date=request.POST['show_date']
+    show_time=request.POST['show_time']
+    room_no=request.POST['room_no']
+    seatx=request.POST['seatx']
+    seaty=request.POST['seaty']
+    price=request.POST['price']
+    sql='''insert into sellTickets user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price values ('%s',%s,%s,'%s','%s',%s,%s,%s,%s)''' % (user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price)
+    if(sqlWrite(sql)):
+        result={
+        "info":"success"
+    }
+    else:
+        result={
+        "info":"fail"
+        }
+
+
     #等触发器
     result={
         "info":"success"
@@ -298,10 +409,27 @@ def cinema(request,cinema_id):#tested
     url = '/cinema_xml/'+cinema_id
     return render(request, 'cinema.html', {'url': url})
 
-def hall(request,room_no):
+def hall(request,room_no,show_date,show_time):#tested
+    if not request.session.has_key('logined') or not request.session['logined']:
+        return render(request, 'signup.html')
     # 座位映射表，a表示available座位，u表示unavailable座位
-    data = ['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa']
-    price = 20 #单价
+    sql='''select seatx_max,seaty_max from room where room_no = %s''' % room_no
+    dbRes=sqlRead(sql)
+    maxX=dbRes[0][0]
+    maxY=dbRes[0][1]
+    data=[['a' for col in range(maxX)] for row in range(maxY)]
+    sql='''select seaty,seatx from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (room_no,show_date,show_time)
+    dbRes=sqlRead(sql)
+    for row in dbRes:
+        data[row[0]][row[1]]='u'
+
+    #最终data形式 ： ['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa']
+    for index,i in enumerate(data):
+        data[index]=''.join(i)
+
+    sql='''select price from movieShow where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
+    dbRes=sqlRead(sql)
+    price = dbRes[0][0] #单价
     return render(request, 'hall.html', {'seatmap': data, 'price': price})
 
 def cinema_xml(request,cinema_id):#tested
@@ -328,23 +456,21 @@ def cinema_xml(request,cinema_id):#tested
     data['movies']=[
         {
             "Name":x[0],
-            "Date":x[1]+' '+x[2],
+            "Date":x[1],
+            "Time":x[2],
             "Runtime":x[3],
             "Director":x[4],
             "Actors":x[5],
             "Type":x[6],
             "Language":x[7],
             "Room":x[8],
+            "RoomUrl":'/'.join(["/hall",str(x[8]),str(x[1]),str(x[2])]),#,str(x[2])]
             "Price":x[9]
 
         }
         for x in dbRes
     ]
 
-
-    sql='''select room_no from room_of_cinema where cinema_id = %d''' % int(cinema_id)
-    dbRes=sqlRead(sql)
-    data['rooms']=[{"room_no":x[0]} for x in dbRes]
 
     return render(request,'cinema_info.xml',data,content_type="application/xml")  
 
@@ -354,6 +480,8 @@ def create_db(request):
     cx = sqlite3.connect("mycinema.db")
     cu=cx.cursor()
     sql_str='''
+
+
 drop table if exists cinema;
 CREATE TABLE cinema (
     cinema_id INT(10) NOT NULL,
@@ -567,15 +695,10 @@ insert into movie values ('9', '唐人街探案', '2015-12-31', '12:00:00', '135
 insert into movie values ('10', '杜拉拉追婚记', '2015-12-04', '12:00:00', '101', '安竹间', '周渝民/林依晨/陈柏霖', 'comedy', 'Chinese', '48');
 
 
-drop table if exists movies_of_cinema;
-CREATE TABLE movies_of_cinema (
-    cinema_id INT(10) NOT NULL,
-    movie_id INT(30) NOT NULL,
-    PRIMARY KEY (cinema_id , movie_id)
-);
 
 drop table if exists userAccount;
 CREATE TABLE userAccount (
+    user_id identity(1,1) not null,
     user_email VARCHAR(40) NOT NULL,
     user_name VARCHAR(40) NOT NULL,
     user_password VARCHAR(30) NOT NULL,
@@ -584,76 +707,59 @@ CREATE TABLE userAccount (
     PRIMARY KEY (user_email)
 );
 
-insert into userAccount values ('jfdke@qq.com', '李易峰', '343ffdd', '12330001', 'admin');
-insert into userAccount values ('fdkj@qq.com', '王郁祥', 'erreeee', '12330002', 'admin');
-insert into userAccount values ('fdffdf@qq.com', '王伟子', 'qerere', '12330003',  'admin');
-insert into userAccount values ('axxxx@163.com', '庄涌临', '22333333', '12330004', 'admin');
-insert into userAccount values ('qwe@qq.com', '郭家桥', '232444d', '12330005', 'admin');
-insert into userAccount values ('pokeid@pku.edu.cn', 'abc', 'abc', '12213233',  'normal');
-insert into userAccount values ('ppppppoe@gmail.com', 'bcd', 'bcd', '12132423',  'normal');
-insert into userAccount values ('fertttt@google.com', 'cde', 'cde', '12444444', 'normal');
-insert into userAccount values ('wefienz@126.com', 'def', 'edf', '12333333', 'normal');
-insert into userAccount values ('uhijjdz@qq.com', 'efg', 'fge', '12220001', 'normal');
-insert into userAccount values ('naodongdakai1@qq.com', '张1', '000001','12306901','normal');
-insert into userAccount values ('naodongdakai2@qq.com', '张2', '000002','12306902','normal');
-insert into userAccount values ('naodongdakai3@qq.com', '张3', '000003','12306903','normal');
-insert into userAccount values ('naodongdakai4@qq.com', '张4', '000004','12306904','normal');
-insert into userAccount values ('naodongdakai5@qq.com', '张5', '000005','12306905','normal');
-insert into userAccount values ('naodongdakai6@qq.com', '张6', '000006','12306906','normal');
-insert into userAccount values ('naodongdakai7@qq.com', '张7', '000007','12306907','normal');
-insert into userAccount values ('naodongdakai8@qq.com', '张8', '000008','12306908','normal');
-insert into userAccount values ('naodongdakai9@qq.com', '张9', '000009','12306909','normal');
-insert into userAccount values ('naodongdakai10@qq.com', '张10', '000010','12306910','normal');
-insert into userAccount values ('naodongdakai11@qq.com', '张11', '000011','12306911','normal');
-insert into userAccount values ('naodongdakai12@qq.com', '张12', '000012','12306912','normal');
-insert into userAccount values ('naodongdakai13@qq.com', '张13', '000013','12306913','normal');
-insert into userAccount values ('naodongdakai14@qq.com', '张14', '000014','12306914','normal');
-insert into userAccount values ('naodongdakai15@qq.com', '张15', '000015','12306915','normal');
-insert into userAccount values ('naodongdakai16@qq.com', '张16', '000016','12306916','normal');
-insert into userAccount values ('naodongdakai17@qq.com', '张17', '000017','12306917','normal');
-insert into userAccount values ('naodongdakai18@qq.com', '张18', '000018','12306918','normal');
-insert into userAccount values ('naodongdakai19@qq.com', '张19', '000019','12306919','normal');
-insert into userAccount values ('naodongdakai20@qq.com', '张20', '000020','12306920','normal');
-insert into userAccount values ('naodongdakai21@qq.com', '张21', '000021','12306921','normal');
-insert into userAccount values ('naodongdakai22@qq.com', '张22', '000022','12306922','normal');
-insert into userAccount values ('naodongdakai23@qq.com', '张23', '000023','12306923','normal');
-insert into userAccount values ('naodongdakai24@qq.com', '张24', '000024','12306924','normal');
-insert into userAccount values ('naodongdakai25@qq.com', '张25', '000025','12306925','normal');
-insert into userAccount values ('naodongdakai26@qq.com', '张26', '000026','12306926','normal');
-insert into userAccount values ('naodongdakai27@qq.com', '张27', '000027','12306927','normal');
-insert into userAccount values ('naodongdakai28@qq.com', '张28', '000028','12306928','normal');
-insert into userAccount values ('naodongdakai29@qq.com', '张29', '000029','12306929','normal');
-insert into userAccount values ('naodongdakai30@qq.com', '张30', '000030','12306930','normal');
-insert into userAccount values ('naodongdakai31@qq.com', '张31', '000031','12306931','normal');
-insert into userAccount values ('naodongdakai32@qq.com', '张32', '000032','12306932','normal');
-insert into userAccount values ('naodongdakai33@qq.com', '张33', '000033','12306933','normal');
-insert into userAccount values ('naodongdakai34@qq.com', '张34', '000034','12306934','normal');
-insert into userAccount values ('naodongdakai35@qq.com', '张35', '000035','12306935','normal');
-insert into userAccount values ('naodongdakai36@qq.com', '张36', '000036','12306936','normal');
-insert into userAccount values ('naodongdakai37@qq.com', '张37', '000037','12306937','normal');
-insert into userAccount values ('naodongdakai38@qq.com', '张38', '000038','12306938','normal');
-insert into userAccount values ('naodongdakai39@qq.com', '张39', '000039','12306939','normal');
-insert into userAccount values ('naodongdakai40@qq.com', '张40', '000040','12306940','normal');
+insert into userAccount values ('1001', 'jfdke@qq.com', '李易峰', '343ffdd', '12330001', 'admin');
+insert into userAccount values ('1002', 'fdkj@qq.com', '王郁祥', 'erreeee', '12330002', 'admin');
+insert into userAccount values ('1003', 'fdffdf@qq.com', '王伟子', 'qerere', '12330003',  'admin');
+insert into userAccount values ('1004', 'axxxx@163.com', '庄涌临', '22333333', '12330004', 'admin');
+insert into userAccount values ('1005', 'qwe@qq.com', '郭家桥', '232444d', '12330005', 'admin');
+insert into userAccount values ('1006', 'pokeid@pku.edu.cn', 'abc', 'abc', '12213233',  'normal');
+insert into userAccount values ('1007', 'ppppppoe@gmail.com', 'bcd', 'bcd', '12132423',  'normal');
+insert into userAccount values ('1008', 'fertttt@google.com', 'cde', 'cde', '12444444', 'normal');
+insert into userAccount values ('1009', 'wefienz@126.com', 'def', 'edf', '12333333', 'normal');
+insert into userAccount values ('1010', 'uhijjdz@qq.com', 'efg', 'fge', '12220001', 'normal');
+insert into userAccount values ('1011', 'naodongdakai1@qq.com', '张1', '000001','12306901','normal');
+insert into userAccount values ('1012', 'naodongdakai2@qq.com', '张2', '000002','12306902','normal');
+insert into userAccount values ('1013', 'naodongdakai3@qq.com', '张3', '000003','12306903','normal');
+insert into userAccount values ('1014', 'naodongdakai4@qq.com', '张4', '000004','12306904','normal');
+insert into userAccount values ('1015', 'naodongdakai5@qq.com', '张5', '000005','12306905','normal');
+insert into userAccount values ('1016', 'naodongdakai6@qq.com', '张6', '000006','12306906','normal');
+insert into userAccount values ('1017', 'naodongdakai7@qq.com', '张7', '000007','12306907','normal');
+insert into userAccount values ('1018','naodongdakai8@qq.com', '张8', '000008','12306908','normal');
+insert into userAccount values ('1019', 'naodongdakai9@qq.com', '张9', '000009','12306909','normal');
+insert into userAccount values ('1020', 'naodongdakai10@qq.com', '张10', '000010','12306910','normal');
+insert into userAccount values ('1021', 'naodongdakai11@qq.com', '张11', '000011','12306911','normal');
+insert into userAccount values ('1022', 'naodongdakai12@qq.com', '张12', '000012','12306912','normal');
+insert into userAccount values ('1023', 'naodongdakai13@qq.com', '张13', '000013','12306913','normal');
+insert into userAccount values ('1024', 'naodongdakai14@qq.com', '张14', '000014','12306914','normal');
+insert into userAccount values ('1025', 'naodongdakai15@qq.com', '张15', '000015','12306915','normal');
+insert into userAccount values ('1026','naodongdakai16@qq.com', '张16', '000016','12306916','normal');
+insert into userAccount values ('1027','naodongdakai17@qq.com', '张17', '000017','12306917','normal');
+insert into userAccount values ('1028', 'naodongdakai18@qq.com', '张18', '000018','12306918','normal');
+insert into userAccount values ('1029', 'naodongdakai19@qq.com', '张19', '000019','12306919','normal');
+insert into userAccount values ('1030','naodongdakai20@qq.com', '张20', '000020','12306920','normal');
+insert into userAccount values ('1031', 'naodongdakai21@qq.com', '张21', '000021','12306921','normal');
+insert into userAccount values ('1032', 'naodongdakai22@qq.com', '张22', '000022','12306922','normal');
+insert into userAccount values ('1033', 'naodongdakai23@qq.com', '张23', '000023','12306923','normal');
+insert into userAccount values ('1034', 'naodongdakai24@qq.com', '张24', '000024','12306924','normal');
+insert into userAccount values ('1035', 'naodongdakai25@qq.com', '张25', '000025','12306925','normal');
+insert into userAccount values ('1036', 'naodongdakai26@qq.com', '张26', '000026','12306926','normal');
+insert into userAccount values ('1037', 'naodongdakai27@qq.com', '张27', '000027','12306927','normal');
+insert into userAccount values ('1038', 'naodongdakai28@qq.com', '张28', '000028','12306928','normal');
+insert into userAccount values ('1039', 'naodongdakai29@qq.com', '张29', '000029','12306929','normal');
+insert into userAccount values ('1040', 'naodongdakai30@qq.com', '张30', '000030','12306930','normal');
+insert into userAccount values ('1041', 'naodongdakai31@qq.com', '张31', '000031','12306931','normal');
+insert into userAccount values ('1042', 'naodongdakai32@qq.com', '张32', '000032','12306932','normal');
+insert into userAccount values ('1043', 'naodongdakai33@qq.com', '张33', '000033','12306933','normal');
+insert into userAccount values ('1044', 'naodongdakai34@qq.com', '张34', '000034','12306934','normal');
+insert into userAccount values ('1045', 'naodongdakai35@qq.com', '张35', '000035','12306935','normal');
+insert into userAccount values ('1046', 'naodongdakai36@qq.com', '张36', '000036','12306936','normal');
+insert into userAccount values ('1047', 'naodongdakai37@qq.com', '张37', '000037','12306937','normal');
+insert into userAccount values ('1048', 'naodongdakai38@qq.com', '张38', '000038','12306938','normal');
+insert into userAccount values ('1049', 'naodongdakai39@qq.com', '张39', '000039','12306939','normal');
+insert into userAccount values ('1050', 'naodongdakai40@qq.com', '张40', '000040','12306940','normal');
 
 
 
-drop table if exists ticket;
-CREATE TABLE ticket (
-    ticket_id INT(30) NOT NULL,
-    movie_id INT(30) NOT NULL,
-    cinema_id INT(10) NOT NULL,
-    show_date DATE NOT NULL,
-    show_time TIME NOT NULL,
-    room_no INT(10) NOT NULL,
-    seatx INT(10) NOT NULL,
-    seaty INT(10) NOT NULL,
-    price NUMERIC(4 , 2 ) NOT NULL,
-    PRIMARY KEY (ticket_id),
-    CONSTRAINT movie_id1 FOREIGN KEY (movie_id)
-        REFERENCES movie (movie_id),
-    FOREIGN KEY (cinema_id , room_no)
-        REFERENCES room_of_cinema (cinema_id , room_no)
-);
 
 drop table if exists movieShow;
 CREATE TABLE movieShow (
@@ -686,8 +792,9 @@ insert into movieShow values ('5', '2', '2015-12-20', '20:00:00', '22','56');
 
  drop table if exists sellTickets;
 CREATE TABLE sellTickets (
-    ticket_id INT(30) NOT NULL,
-    cinema_id INT(10) NOT NULL,
+    ticket_id INT identity(1,1) not NULL,
+    user_id varchar(40),
+    cinema_id INT(10) not NULL,
     movie_id INT(30) NOT NULL,
     show_date DATE NOT NULL,
     show_time TIME NOT NULL,
@@ -695,9 +802,44 @@ CREATE TABLE sellTickets (
     seatx INT(10) NOT NULL,
     seaty INT(10) NOT NULL,
     price NUMERIC(4 , 2 ) NOT NULL,
-    ifown INT(1) CHECK (ifown IN ('0' , '1')),
-    PRIMARY KEY (ticket_id , cinema_id , movie_id)
+    
+    PRIMARY KEY (ticket_id),
+    unique(seatx,seaty,show_date,show_time,room_no)
 );
+
+create trigger seat_check1 before insert on sellTickets
+    for each row
+    begin
+    select raise(rollback, '选座失败')
+    where exists(select cinema_id, movie_id, show_date, show_time, room_no
+                 from sellTickets
+                 where cinema_id = new.cinema_id and movie_id = new.movie.id and show_date = new.show_date and show_time = new.show_time and room_no = new.room_no)
+    and new.seatx > 2
+    and exists(select seatx, seaty
+         from sellTickets
+         where seatx = new.seatx - 2 and seaty = new.seaty)
+    and (select seatx, seaty
+         from sellTickets
+         where seatx = new.seatx - 1 and seaty = new.seaty) is null;
+    
+    end;
+    
+create trigger seat_check2 before insert on sellTickets
+    for each row
+    begin
+    select raise(rollback, '选座失败')
+    where exists(select cinema_id, movie_id, show_date, show_time, room_no
+                 from sellTickets
+                 where cinema_id = new.cinema_id and movie_id = new.movie.id and show_date = new.show_date and show_time = new.show_time and room_no = new.room_no)
+    and new.seatx < 9
+    and exists(select seatx, seaty
+         from sellTickets
+         where seatx = new.seatx + 2 and seaty = new.seaty)
+    and (select seatx, seaty
+         from sellTickets
+         where seatx = new.seatx + 1 and seaty = new.seaty) is null;
+    
+    end;
 
 
 
