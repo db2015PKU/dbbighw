@@ -180,11 +180,11 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
     "method": "排序方法，0为按综合排序（评分），且不返回空位数；1为按照空位，即 method为0时按综合排序给出普通搜索的结果，如果method为1  再根据abovemean是0还是1定",
     "abovemean":"在method为1的情况下，0返回空位最高的，1返回空位高于平均"
     '''
-    district_no=request.POST['district_no']
+    district_no=request.GET['district_no']
     district=District_dict[district_no]
 
-    method=int(request.POST['method'])
-    abovemean=int(request.POST['abovemean'])
+    method=int(request.GET['method'])
+    abovemean=int(request.GET['abovemean'])
     if method==0:#tested
         sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate,cinema_id  from cinema where district = '%s' order by estimate" % district
         dbRes=sqlRead(sql)
@@ -432,10 +432,10 @@ def hall(request,room_no,show_date,show_time):#tested
     for index,i in enumerate(data):
         data[index]=''.join(i)
 
-    sql='''select price from movieShow where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
+    sql='''select price,cinema_id,movie_id from movieShow where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
     dbRes=sqlRead(sql)
     price = dbRes[0][0] #单价
-    return render(request, 'hall.html', {'seatmap': data, 'price': price, 'user_email': request.session['user_email']})
+    return render(request, 'hall.html', {'seatmap': data, 'price': price, 'user_email': request.session['user_email'],'cinema_id':dbRes[0][1],'movie_id':dbRes[0][2],'show_date':show_date,'show_time':show_time,'room_no':room_no})
 
 def cinema_xml(request,cinema_id):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
