@@ -8,7 +8,7 @@ function choicesOnchange() {
 	console.log(area);
 	console.log(rankmethod);
 	console.log(abovemean);
-	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
+	$.post("/search/cinema/by_district/", { district_no: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
 }
 function changeCinemas(data) {
 	$("#cinemas").html("");
