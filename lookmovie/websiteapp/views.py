@@ -184,7 +184,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
     district=District_dict[district_no]
 
     method=int(request.GET['method'])
-    abovemean=int(request.GET['abovemean'])
+   
     if method==0:#tested
         sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate,cinema_id  from cinema where district = '%s' order by estimate" % district
         dbRes=sqlRead(sql)
@@ -227,7 +227,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
         }
         ]
     }'''
-    elif method==1:#买票数据部分因为没有数据无法测试，其他测试正常
+    else:#买票数据部分因为没有数据无法测试，其他测试正常
         #空位计算方式：先看某个电影院放映的电影场次有哪些，每个场次在哪个放映厅放映，根据放映厅最大座位数与现已出售票的数目只差确定空位数
         sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate,cinema_id from cinema where district = '%s'" % district
         dbRes=sqlRead(sql)
@@ -262,7 +262,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
                 availableTotal-=countRes[0][0]
             row["seatsAvailTotal"]=availableTotal
         result['data']=sorted(result['data'],lambda x,y:cmp(x['seatsAvailTotal'],y['seatsAvailTotal']),reverse=True)
-        if abovemean==0:#tested
+        if method==1:#tested
             result['data']=[result['data'][0]]
             '''result={
         "data":[
@@ -277,7 +277,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
             }
         ]
     }'''
-        elif abovemean==1:#tested
+        elif method==2:#tested
             mean=sum(map(lambda x:x['seatsAvailTotal'],result['data']))/float(len(result['data']))
             result['data']=[x for x in result['data'] if x['seatsAvailTotal']>=mean]
             result['mean']=mean
