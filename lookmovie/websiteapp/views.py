@@ -66,7 +66,8 @@ def login(request):#拿到正确返回值后前端似乎应该自己再重定向
 
         #result={'logined':True,'info':'success','user_permissions':'normal'}
         request.session['logined'] = result['logined']#初始化session
-        return HttpResponse(json.dumps(result), content_type="application/json")
+        #return HttpResponse(json.dumps(result), content_type="application/json")
+        return HttpResponseRedirect("/")
 
 def sign(request):#前端的值似乎没传好，user_email这个字段获取不到
     if request.method == 'GET':
@@ -85,7 +86,8 @@ def sign(request):#前端的值似乎没传好，user_email这个字段获取不
             result={'signed':True,'info':'user_email_have_been_used'}
             print 'eamil exist'
         #result={'signed':True,'info':'success'}
-        return HttpResponse(json.dumps(result), content_type="application/json")
+        #return HttpResponse(json.dumps(result), content_type="application/json")
+        return HttpResponseRedirect("/")
         
 def exit(request):#tested
     del request.session['logined']
@@ -191,9 +193,9 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
             "road":x[2],
             "busStation":x[3],
             "businessHoursBegin":x[4],
-            "businessHoursBegin":x[5],
+            "businessHoursEnd":x[5],
             "estimate":x[6],
-           
+            "url": "cinema_url",
         } 
             for x in dbRes]
         }
@@ -235,9 +237,10 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
                 "road":x[2],
                 "busStation":x[3],
                 "businessHoursBegin":x[4],
-                "businessHoursBegin":x[5],
+                "businessHoursEnd":x[5],
                 "estimate":x[6],
-                "cinema_id":x[7]
+                "cinema_id":x[7],
+                "url": "cinema_url",
             }
             for x in dbRes]
         }
