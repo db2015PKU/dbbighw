@@ -59,7 +59,7 @@ def login(request):#拿到正确返回值后前端似乎应该自己再重定向
             if dbRes[0][1]==user_password:
                 request.session['logined']=True
                 request.session['user_id']=dbRes[0][2]
-                request.session['user_email']=dbRes[0][1]
+                request.session['user_email']=dbRes[0][0]
                 
             else:
                 request.session['logined']=False
@@ -95,8 +95,8 @@ def exit(request):#tested
     del request.session['logined']
     return render(request, 'signup.html')
 
-def user_ticket_history(request,user_id):#complete但没有数据可以测试
-    sql='''select cinema_name,movie_name,room_no,sellTickets.show_date,sellTickets.show_time from (sellTickets left outer join cinema on sellTickets.cinema_id = cinema.cinema_id) left outer join movie on sellTickets.movie_id = movie.movie_id where user_id = %s''' % user_id
+def user_ticket_history(request):#complete但没有数据可以测试
+    sql='''select cinema_name,movie_name,room_no,sellTickets.show_date,sellTickets.show_time from (sellTickets left outer join cinema on sellTickets.cinema_id = cinema.cinema_id) left outer join movie on sellTickets.movie_id = movie.movie_id where user_id = %s''' % request.session['user_id']
     dbRes=sqlRead(sql)
     data=[
         {
