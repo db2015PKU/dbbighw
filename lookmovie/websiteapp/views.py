@@ -39,6 +39,8 @@ def sqlWrite(sql_str):
             con.commit()
         return True
     except Exception as e:
+        with open('log.txt','w') as f:
+            f.write(str(e))
         return False
 
 def login(request):#拿到正确返回值后前端似乎应该自己再重定向到首页？
@@ -48,25 +50,22 @@ def login(request):#拿到正确返回值后前端似乎应该自己再重定向
         else:
             return HttpResponseRedirect('/')
     elif request.method == 'POST':
-        user_email='jfdke@qq.com'#request.POST['user_email']
-        user_password='343ffdd'#request.POST['user_password']
-        sql="select user_email,user_password,user_permissions from userAccount where user_email = '%s'" % user_email
+        user_email=request.POST['user_email']
+        user_password=request.POST['user_password']
+        sql="select user_email,user_password,user_id from userAccount where user_email = '%s'" % user_email
         print sql
         dbRes=sqlRead(sql)
         if dbRes:
             if dbRes[0][1]==user_password:
-                result={'logined':True,'info':'success'}
-                result['user_permissions']=dbRes[0][2]
-                print 'success'
+                request.session['logined']=True
+                request.session['user_id']=dbRes[0][2]
+                request.session['user_email']=dbRes[0][1]
+                
             else:
-                result={'logined':False,'info':'password_error','user_permissions':'normal'}
-                print 'pswd error'
+                request.session['logined']=False
         else:
-            result={'logined':False,'info':'no_such_user','user_permissions':'normal'}
-
-        #result={'logined':True,'info':'success','user_permissions':'normal'}
-        request.session['logined'] = result['logined']#初始化session
-        #return HttpResponse(json.dumps(result), content_type="application/json")
+            request.session['logined']=False
+       
         return HttpResponseRedirect("/")
 
 def sign(request):#前端的值似乎没传好，user_email这个字段获取不到
@@ -78,15 +77,18 @@ def sign(request):#前端的值似乎没传好，user_email这个字段获取不
     elif request.method == 'POST':
         user_email=request.POST['user_email']
         user_password=request.POST['user_password']
-        sql="insert into userAccount (user_email,user_password) values (%s,%s)" % (user_email,user_password)
+        sql="insert into userAccount (user_email,user_password,user_permissions) values ('%s','%s','normal')" % (user_email,user_password)
         if sqlWrite(sql):
-            result={'signed':True,'info':'success'}
-            print 'success'
+            request.session['logined']=True
+            sql="select user_id,user_email from userAccount where user_email = '%s'" % user_email
+            dbRes=sqlRead(sql)
+            request.session['user_id']=dbRes[0][0]
+            request.session['user_email']=dbRes[0][1]
+          
         else:
-            result={'signed':True,'info':'user_email_have_been_used'}
-            print 'eamil exist'
-        #result={'signed':True,'info':'success'}
-        #return HttpResponse(json.dumps(result), content_type="application/json")
+            request.session['logined']=False
+         
+        
         return HttpResponseRedirect("/")
         
 def exit(request):#tested
@@ -150,7 +152,7 @@ def user_ticket_history(request,user_id):#complete但没有数据可以测试
 
     ]'''
     # return HttpResponse(json.dumps(result), content_type="application/json")
-    return render(request, 'history.html', {'data': data, 'user_email': user_email})
+    return render(request, 'history.html', {'data': data, 'user_email': request.session['user_email']})
 
 
 
@@ -178,11 +180,11 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
     "method": "排序方法，0为按综合排序（评分），且不返回空位数；1为按照空位，即 method为0时按综合排序给出普通搜索的结果，如果method为1  再根据abovemean是0还是1定",
     "abovemean":"在method为1的情况下，0返回空位最高的，1返回空位高于平均"
     '''
-    district_no='4'#request.POST['district_no']
+    district_no=request.POST['district_no']
     district=District_dict[district_no]
 
-    method=1#int(request.POST['method'])
-    abovemean=0#int(request.POST['abovemean'])
+    method=int(request.POST['method'])
+    abovemean=int(request.POST['abovemean'])
     if method==0:#tested
         sql="select cinema_name,district,road,busStation,businessHoursBegin,businessHoursEnd,estimate,cinema_id  from cinema where district = '%s' order by estimate" % district
         dbRes=sqlRead(sql)
@@ -195,7 +197,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
             "businessHoursBegin":x[4],
             "businessHoursEnd":x[5],
             "estimate":x[6],
-            "url": "cinema_url",
+            "url": "/cinema/"+str(x[7]),
         } 
             for x in dbRes]
         }
@@ -240,7 +242,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
                 "businessHoursEnd":x[5],
                 "estimate":x[6],
                 "cinema_id":x[7],
-                "url": "cinema_url",
+                "url": "/cinema/"+str(x[7]),
             }
             for x in dbRes]
         }
@@ -331,7 +333,7 @@ def search_cinema_by_movie(request):#返回的字典数值tested，render未测�
 
 
     #return HttpResponse(json.dumps(data), content_type="application/json")
-    return render(request, 'search.html', {'data':data, 'movie_name':movie_name, 'user_email': user_email})
+    return render(request, 'search.html', {'data':data, 'movie_name':movie_name, 'user_email': request.session['user_email']})
 
 def search_movie_total(request): #tested
 #找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
@@ -371,10 +373,10 @@ def search_movie_total(request): #tested
 
 
     #data = [{"movie_name":"电影名1","sold_rate":0.55,"max_price":100,"min_price":50},{"movie_name":"电影名2","sold_rate":0.7,"max_price":90,"min_price":40}]
-    return render(request, 'hottoday.html', {'data': data, 'datastr': str(data), 'user_email': user_email})
+    return render(request, 'hottoday.html', {'data': data, 'datastr': str(data), 'user_email': request.session['user_email']})
 
 def ticket(request):#complete but without test
-    user_id=request.POST['user_id']
+    user_id=request.session['user_id']
     cinema_id=request.POST['cinema_id']
     movie_id=request.POST['movie_id']
     show_date=request.POST['show_date']
@@ -404,13 +406,13 @@ def ticket(request):#complete but without test
 def index(request):
     if not request.session.has_key('logined') or not request.session['logined']:
         return render(request, 'signup.html')
-    return render(request, 'index.html', {'user_email': user_email})
+    return render(request, 'index.html', {'user_email': request.session['user_email']})
 
 def cinema(request,cinema_id):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
         return render(request, 'signup.html')
     url = '/cinema_xml/'+cinema_id
-    return render(request, 'cinema.html', {'url': url, 'user_email': user_email})
+    return render(request, 'cinema.html', {'url': url, 'user_email': request.session['user_email']})
 
 def hall(request,room_no,show_date,show_time):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
@@ -433,7 +435,7 @@ def hall(request,room_no,show_date,show_time):#tested
     sql='''select price from movieShow where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
     dbRes=sqlRead(sql)
     price = dbRes[0][0] #单价
-    return render(request, 'hall.html', {'seatmap': data, 'price': price, 'user_email': user_email})
+    return render(request, 'hall.html', {'seatmap': data, 'price': price, 'user_email': request.session['user_email']})
 
 def cinema_xml(request,cinema_id):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
@@ -701,65 +703,15 @@ insert into movie values ('10', '杜拉拉追婚记', '2015-12-04', '12:00:00', 
 
 drop table if exists userAccount;
 CREATE TABLE userAccount (
-    user_id identity(1,1) not null,
+    user_id INTEGER PRIMARY KEY,
     user_email VARCHAR(40) NOT NULL,
-    user_name VARCHAR(40) NOT NULL,
+    user_name VARCHAR(40) NOT NULL default '测试用户',
     user_password VARCHAR(30) NOT NULL,
-    user_phone VARCHAR(20) NOT NULL,
-    user_permissions VARCHAR(15) CHECK (user_permissions IN ('admin' , 'normal')),
-    PRIMARY KEY (user_email)
+    user_phone VARCHAR(20) NOT NULL default '123',
+    user_permissions VARCHAR(15) CHECK (user_permissions IN ('admin' , 'normal'))
+   
 );
 
-insert into userAccount values ('1001', 'jfdke@qq.com', '李易峰', '343ffdd', '12330001', 'admin');
-insert into userAccount values ('1002', 'fdkj@qq.com', '王郁祥', 'erreeee', '12330002', 'admin');
-insert into userAccount values ('1003', 'fdffdf@qq.com', '王伟子', 'qerere', '12330003',  'admin');
-insert into userAccount values ('1004', 'axxxx@163.com', '庄涌临', '22333333', '12330004', 'admin');
-insert into userAccount values ('1005', 'qwe@qq.com', '郭家桥', '232444d', '12330005', 'admin');
-insert into userAccount values ('1006', 'pokeid@pku.edu.cn', 'abc', 'abc', '12213233',  'normal');
-insert into userAccount values ('1007', 'ppppppoe@gmail.com', 'bcd', 'bcd', '12132423',  'normal');
-insert into userAccount values ('1008', 'fertttt@google.com', 'cde', 'cde', '12444444', 'normal');
-insert into userAccount values ('1009', 'wefienz@126.com', 'def', 'edf', '12333333', 'normal');
-insert into userAccount values ('1010', 'uhijjdz@qq.com', 'efg', 'fge', '12220001', 'normal');
-insert into userAccount values ('1011', 'naodongdakai1@qq.com', '张1', '000001','12306901','normal');
-insert into userAccount values ('1012', 'naodongdakai2@qq.com', '张2', '000002','12306902','normal');
-insert into userAccount values ('1013', 'naodongdakai3@qq.com', '张3', '000003','12306903','normal');
-insert into userAccount values ('1014', 'naodongdakai4@qq.com', '张4', '000004','12306904','normal');
-insert into userAccount values ('1015', 'naodongdakai5@qq.com', '张5', '000005','12306905','normal');
-insert into userAccount values ('1016', 'naodongdakai6@qq.com', '张6', '000006','12306906','normal');
-insert into userAccount values ('1017', 'naodongdakai7@qq.com', '张7', '000007','12306907','normal');
-insert into userAccount values ('1018','naodongdakai8@qq.com', '张8', '000008','12306908','normal');
-insert into userAccount values ('1019', 'naodongdakai9@qq.com', '张9', '000009','12306909','normal');
-insert into userAccount values ('1020', 'naodongdakai10@qq.com', '张10', '000010','12306910','normal');
-insert into userAccount values ('1021', 'naodongdakai11@qq.com', '张11', '000011','12306911','normal');
-insert into userAccount values ('1022', 'naodongdakai12@qq.com', '张12', '000012','12306912','normal');
-insert into userAccount values ('1023', 'naodongdakai13@qq.com', '张13', '000013','12306913','normal');
-insert into userAccount values ('1024', 'naodongdakai14@qq.com', '张14', '000014','12306914','normal');
-insert into userAccount values ('1025', 'naodongdakai15@qq.com', '张15', '000015','12306915','normal');
-insert into userAccount values ('1026','naodongdakai16@qq.com', '张16', '000016','12306916','normal');
-insert into userAccount values ('1027','naodongdakai17@qq.com', '张17', '000017','12306917','normal');
-insert into userAccount values ('1028', 'naodongdakai18@qq.com', '张18', '000018','12306918','normal');
-insert into userAccount values ('1029', 'naodongdakai19@qq.com', '张19', '000019','12306919','normal');
-insert into userAccount values ('1030','naodongdakai20@qq.com', '张20', '000020','12306920','normal');
-insert into userAccount values ('1031', 'naodongdakai21@qq.com', '张21', '000021','12306921','normal');
-insert into userAccount values ('1032', 'naodongdakai22@qq.com', '张22', '000022','12306922','normal');
-insert into userAccount values ('1033', 'naodongdakai23@qq.com', '张23', '000023','12306923','normal');
-insert into userAccount values ('1034', 'naodongdakai24@qq.com', '张24', '000024','12306924','normal');
-insert into userAccount values ('1035', 'naodongdakai25@qq.com', '张25', '000025','12306925','normal');
-insert into userAccount values ('1036', 'naodongdakai26@qq.com', '张26', '000026','12306926','normal');
-insert into userAccount values ('1037', 'naodongdakai27@qq.com', '张27', '000027','12306927','normal');
-insert into userAccount values ('1038', 'naodongdakai28@qq.com', '张28', '000028','12306928','normal');
-insert into userAccount values ('1039', 'naodongdakai29@qq.com', '张29', '000029','12306929','normal');
-insert into userAccount values ('1040', 'naodongdakai30@qq.com', '张30', '000030','12306930','normal');
-insert into userAccount values ('1041', 'naodongdakai31@qq.com', '张31', '000031','12306931','normal');
-insert into userAccount values ('1042', 'naodongdakai32@qq.com', '张32', '000032','12306932','normal');
-insert into userAccount values ('1043', 'naodongdakai33@qq.com', '张33', '000033','12306933','normal');
-insert into userAccount values ('1044', 'naodongdakai34@qq.com', '张34', '000034','12306934','normal');
-insert into userAccount values ('1045', 'naodongdakai35@qq.com', '张35', '000035','12306935','normal');
-insert into userAccount values ('1046', 'naodongdakai36@qq.com', '张36', '000036','12306936','normal');
-insert into userAccount values ('1047', 'naodongdakai37@qq.com', '张37', '000037','12306937','normal');
-insert into userAccount values ('1048', 'naodongdakai38@qq.com', '张38', '000038','12306938','normal');
-insert into userAccount values ('1049', 'naodongdakai39@qq.com', '张39', '000039','12306939','normal');
-insert into userAccount values ('1050', 'naodongdakai40@qq.com', '张40', '000040','12306940','normal');
 
 
 
@@ -795,7 +747,7 @@ insert into movieShow values ('5', '2', '2015-12-20', '20:00:00', '22','56');
 
  drop table if exists sellTickets;
 CREATE TABLE sellTickets (
-    ticket_id INT identity(1,1) not NULL,
+    ticket_id INTEGER PRIMARY KEY,
     user_id varchar(40),
     cinema_id INT(10) not NULL,
     movie_id INT(30) NOT NULL,
@@ -806,7 +758,7 @@ CREATE TABLE sellTickets (
     seaty INT(10) NOT NULL,
     price NUMERIC(4 , 2 ) NOT NULL,
     
-    PRIMARY KEY (ticket_id),
+    
     unique(seatx,seaty,show_date,show_time,room_no)
 );
 
