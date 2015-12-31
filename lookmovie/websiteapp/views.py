@@ -150,7 +150,7 @@ def user_ticket_history(request,user_id):#complete但没有数据可以测试
 
     ]'''
     # return HttpResponse(json.dumps(result), content_type="application/json")
-    return render(request, 'history.html', {'data': data})
+    return render(request, 'history.html', {'data': data, 'user_email': user_email})
 
 
 
@@ -331,7 +331,7 @@ def search_cinema_by_movie(request):#返回的字典数值tested，render未测�
 
 
     #return HttpResponse(json.dumps(data), content_type="application/json")
-    return render(request, 'search.html', {'data':data, 'movie_name':movie_name})
+    return render(request, 'search.html', {'data':data, 'movie_name':movie_name, 'user_email': user_email})
 
 def search_movie_total(request): #tested
 #找出今日所有电影院上映的不同电影，显示每部电影的上座率,影票的最高、最低价格。 
@@ -371,7 +371,7 @@ def search_movie_total(request): #tested
 
 
     #data = [{"movie_name":"电影名1","sold_rate":0.55,"max_price":100,"min_price":50},{"movie_name":"电影名2","sold_rate":0.7,"max_price":90,"min_price":40}]
-    return render(request, 'hottoday.html', {'data': data, 'datastr': str(data)})
+    return render(request, 'hottoday.html', {'data': data, 'datastr': str(data), 'user_email': user_email})
 
 def ticket(request):#complete but without test
     user_id=request.POST['user_id']
@@ -404,13 +404,13 @@ def ticket(request):#complete but without test
 def index(request):
     if not request.session.has_key('logined') or not request.session['logined']:
         return render(request, 'signup.html')
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'user_email': user_email})
 
 def cinema(request,cinema_id):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
         return render(request, 'signup.html')
     url = '/cinema_xml/'+cinema_id
-    return render(request, 'cinema.html', {'url': url})
+    return render(request, 'cinema.html', {'url': url, 'user_email': user_email})
 
 def hall(request,room_no,show_date,show_time):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
@@ -433,7 +433,7 @@ def hall(request,room_no,show_date,show_time):#tested
     sql='''select price from movieShow where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
     dbRes=sqlRead(sql)
     price = dbRes[0][0] #单价
-    return render(request, 'hall.html', {'seatmap': data, 'price': price})
+    return render(request, 'hall.html', {'seatmap': data, 'price': price, 'user_email': user_email})
 
 def cinema_xml(request,cinema_id):#tested
     if not request.session.has_key('logined') or not request.session['logined']:
