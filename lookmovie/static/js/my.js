@@ -1,17 +1,12 @@
 function choicesOnchange() {
-	var area = $("input[name='area']:checked").attr("value");
-	var rankmethod = $("input[name='rankmethod']:checked").attr("value");
-	var abovemean = 0;
-	if ($("input[name='abovemean']").prop("checked")) {
-		abovemean = 1;
-	}
+	var district_no = $("input[name='area']:checked").attr("value");
+	var method = $("input[name='rankmethod']:checked").attr("value");
 	console.log(area);
 	console.log(rankmethod);
 	console.log(abovemean);
 	var url = "/search/cinema/by_district/?";
-	url = url + "district_no=" + area;
-	url = url + "&method=" + rankmethod;
-	url = url + "&abovemean=" + abovemean;
+	url = url + "district_no=" + district_no;
+	url = url + "&method=" + method;
 	
 	$.get(url, changeCinemas);
 }
@@ -56,12 +51,40 @@ function buyticket() {
 	$('#mymodal').modal("show");
 }
 function buy() {
-	var allseat = $("input[name='seat'][disabled!='disabled']:checked");
+	var allseat = $(".seatCharts-seat.selected");
 	var data = new Array();
 	for (var i = 0; i < allseat.length; i++) {
-		data.push(allseat[i].value);
+		data.push(allseat[i].id);
+	}
+	console.log(data);
+	
+	var seatx = new Array();
+	var seaty = new Array();
+	for (var i = 0; i < data.length; i++) {
+		console.log(data[i]);
+		var tmp = data[i].split("_");
+		console.log("tmp: " + tmp);
+		seatx.push(tmp[0]);
+		seaty.push(tmp[1]);
 	}
 	// send buy request
+	var cinema_id = $("#cinema_id").html();
+	var movie_id = $("#movie_id").html();
+	var show_date = $("#show_date").html();
+	var show_time = $("#show_time").html();
+	var room_no = $("#room_no").html();
+	var price = $("#price").html();
+	// console.log("cinema_id: " + cinema_id);
+	// console.log("movie_id: " + movie_id);
+	// console.log("show_date: " + show_date);
+	// console.log("show_time: " + show_time);
+	// console.log("room_no: " + room_no);
+	
+	// console.log("seatx: " + seatx);
+	// console.log("seaty: " + seaty);
+	$.post("/ticket/", {cinema_id: cinema_id, movie_id: movie_id, show_date: show_date, show_time: show_time, room_no: room_no, price: price, seatx: seatx, seaty: seaty}, function(result){
+		console.log(result);
+	});
 	var status = 0;
 	if (status == 0) { // 成功
 		$(".modal-body").html("<div class=\"alert alert-success\" role=\"alert\"><Strong>购票成功！！</strong></div>");
@@ -88,14 +111,11 @@ function buyfailed() {
 }
 
 function indexCinema() {
-	var area = 1;
-	var rankmethod = 0;
-	var abovemean = 0;
+	var district_no = 1;
+	var method = 0;
 	var url = "/search/cinema/by_district/?";
-	url = url + "district_no=" + area;
-	url = url + "&method=" + rankmethod;
-	url = url + "&abovemean=" + abovemean;
-	
+	url = url + "district_no=" + district_no;
+	url = url + "&method=" + method;	
 	$.get(url, changeCinemas);
 }
 
