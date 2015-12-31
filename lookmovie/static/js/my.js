@@ -8,7 +8,12 @@ function choicesOnchange() {
 	console.log(area);
 	console.log(rankmethod);
 	console.log(abovemean);
-	$.get("/search/cinema/by_district/", { district_no: area, method: rankmethod, abovemean: abovemean }, changeCinemas);
+	var url = "/search/cinema/by_district/?";
+	url = url + "district_no=" + area;
+	url = url + "&method=" + rankmethod;
+	url = url + "&abovemean=" + abovemean;
+	
+	$.get(url, changeCinemas);
 }
 function changeCinemas(data) {
 	$("#cinemas").html("");
@@ -83,10 +88,15 @@ function buyfailed() {
 }
 
 function indexCinema() {
-	var area = 0;
+	var area = 1;
 	var rankmethod = 0;
 	var abovemean = 0;
-	$.post("/search/cinema/by_district/", { area: area, rankmethod: rankmethod, abovemean: abovemean }, changeCinemas);
+	var url = "/search/cinema/by_district/?";
+	url = url + "district_no=" + area;
+	url = url + "&method=" + rankmethod;
+	url = url + "&abovemean=" + abovemean;
+	
+	$.get(url, changeCinemas);
 }
 
 function getCinemaXML(url) {

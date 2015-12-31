@@ -46,15 +46,12 @@
     <div class="choices">
       <div class="area">
         <div class="row">
-          <div class="col-md-1">
+          <div class="col-md-2">
             <p style="font-weight:bold;">行政区：</p>
           </div>
-          <div class="col-md-11">
+          <div class="col-md-10">
             <label class="radio-inline">
-              <input type="radio" name="area" onchange="choicesOnchange()" id="area0" value="0" checked="checked"> 全部
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="area" onchange="choicesOnchange()" id="area1" value="1"> 东城区
+              <input type="radio" name="area" onchange="choicesOnchange()" id="area1" value="1" checked="checked"> 东城区
             </label>
             <label class="radio-inline">
               <input type="radio" name="area" onchange="choicesOnchange()" id="area2" value="2"> 西城区
@@ -107,31 +104,19 @@
       <br />
       <div class="rankmethod">
         <div class="row">
-          <div class="col-md-1">
-            <p style="font-weight:bold;">排序：</p>
+          <div class="col-md-2">
+            <p style="font-weight:bold;">筛选与排序：</p>
           </div>
-          <div class="col-md-11">
+          <div class="col-md-10">
             <label class="radio-inline">
               <input type="radio" name="rankmethod" onchange="choicesOnchange()" id="rate" value="0" checked="checked"> 综合
             </label>
             <label class="radio-inline">
               <input type="radio" name="rankmethod" onchange="choicesOnchange()" id="seat" value="1"> 空位最多
             </label>
-          </div>
-        </div>
-      </div>
-      <br />
-      <div class="filter">
-        <div class="row">
-          <div class="col-md-1">
-            <p style="font-weight:bold;">筛选：</p>
-          </div>
-          <div class="col-md-11">
-            <div class="checkbox" style="margin-top: 0px; margin-bottom: 0px;">
-              <label>
-                <input type="checkbox" name="abovemean" onchange="choicesOnchange()" id="abovemean" value="1"> 仅显示空位不低于平均数的影院
-              </label>
-            </div>
+            <label class="radio-inline">
+              <input type="radio" name="rankmethod" onchange="choicesOnchange()" id="seat" value="2"> 空位不低于平均数
+            </label>
           </div>
         </div>
       </div>
