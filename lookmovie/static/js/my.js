@@ -7,7 +7,7 @@ function choicesOnchange() {
 	var url = "/search/cinema/by_district/?";
 	url = url + "district_no=" + district_no;
 	url = url + "&method=" + method;
-	
+
 	$.get(url, changeCinemas);
 }
 function changeCinemas(data) {
@@ -51,63 +51,42 @@ function buyticket() {
 	$('#mymodal').modal("show");
 }
 function buy() {
-	var allseat = $(".seatCharts-seat.selected");
-	var data = new Array();
-	for (var i = 0; i < allseat.length; i++) {
-		data.push(allseat[i].id);
-	}
-	console.log(data);
-	
-	var seatx = new Array();
-	var seaty = new Array();
-	for (var i = 0; i < data.length; i++) {
-		console.log(data[i]);
-		var tmp = data[i].split("_");
-		console.log("tmp: " + tmp);
-		seatx.push(tmp[0]);
-		seaty.push(tmp[1]);
-	}
-	// send buy request
 	var cinema_id = $("#cinema_id").html();
 	var movie_id = $("#movie_id").html();
 	var show_date = $("#show_date").html();
 	var show_time = $("#show_time").html();
 	var room_no = $("#room_no").html();
 	var price = $("#price").html();
-	// console.log("cinema_id: " + cinema_id);
-	// console.log("movie_id: " + movie_id);
-	// console.log("show_date: " + show_date);
-	// console.log("show_time: " + show_time);
-	// console.log("room_no: " + room_no);
-	
-	// console.log("seatx: " + seatx);
-	// console.log("seaty: " + seaty);
-	$.post("/ticket/", {cinema_id: cinema_id, movie_id: movie_id, show_date: show_date, show_time: show_time, room_no: room_no, price: price, seatx: seatx, seaty: seaty}, function(result){
-		console.log(result);
-	});
-	var status = 0;
-	if (status == 0) { // 成功
-		$(".modal-body").html("<div class=\"alert alert-success\" role=\"alert\"><Strong>购票成功！！</strong></div>");
-		$("#buy").html("确定");
-		$("#close").hide();
-		$("#buy").attr("onclick", "buysuccess()");
-	} else {
-		$(".modal-body").html("<div class=\"alert alert-danger\" role=\"alert\"><Strong>购票失败！！</strong></div>");
-		$("#buy").html("确定");
-		$("#close").hide();
-		$("#buy").attr("onclick", "buyfailed()");
+
+	var allseat = $(".seatCharts-seat.selected");
+	for (var i = 0; i < allseat.length; i++) {
+		var tmp = allseat[i].id.split("_");
+		var seatx = tmp[0];
+		var seaty = tmp[1];
+		console.log("seatx: " + seatx);
+		console.log("seaty: " + seaty);
+		$(".modal-body").html("");
+		$.post("/ticket/", { cinema_id: cinema_id, movie_id: movie_id, show_date: show_date, show_time: show_time, room_no: room_no, price: price, seatx: seatx, seaty: seaty }, function (result) {
+			console.log(result.info);
+			if (result.info == "success") {
+				var content = "<div class=\"alert alert-success\" role=\"alert\">" + seaty + "排" + seatx + "号：" + "<Strong> 购票成功！！</strong></div> "
+				$(".modal-body").append(content);
+			} else {
+				var content = "<div class=\"alert alert-danger\" role=\"alert\">" + seaty + "排" + seatx + "号：" + "<Strong> 购票失败！！</strong></div> "
+				$(".modal-body").append(content);
+			}
+
+		});
 	}
+	$("#buy").html("确定");
+	$("#close").hide();
+	$("#buy").attr("onclick", "buycomplete()");
 }
 function modalclose() {
 	$('#mymodal').modal("hide");
 }
-function buysuccess() {
-	//window.location = "http://localhost:8000/";
-	modalclose();
-}
-function buyfailed() {
-	//window.location = "http://localhost:8000/hall/";
-	modalclose();
+function buycomplete() {
+	window.location.reload();
 }
 
 function indexCinema() {
@@ -115,7 +94,7 @@ function indexCinema() {
 	var method = 0;
 	var url = "/search/cinema/by_district/?";
 	url = url + "district_no=" + district_no;
-	url = url + "&method=" + method;	
+	url = url + "&method=" + method;
 	$.get(url, changeCinemas);
 }
 
