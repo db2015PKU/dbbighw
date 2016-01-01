@@ -388,11 +388,15 @@ def ticket(request):#complete but without test
     sql='''insert into sellTickets user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price values ('%s',%s,%s,'%s','%s',%s,%s,%s,%s)''' % (user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price)
     if(sqlWrite(sql)):
         result={
-        "info":"success"
+        "info":"success",
+        "seatx":seatx,
+        "seaty":seaty
     }
     else:
         result={
-        "info":"fail"
+        "info":"fail",
+        "seatx":seatx,
+        "seaty":seaty
         }
 
 
