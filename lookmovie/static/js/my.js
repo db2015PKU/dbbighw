@@ -1,9 +1,6 @@
 function choicesOnchange() {
 	var district_no = $("input[name='area']:checked").attr("value");
 	var method = $("input[name='rankmethod']:checked").attr("value");
-	console.log(area);
-	console.log(rankmethod);
-	console.log(abovemean);
 	var url = "/search/cinema/by_district/?";
 	url = url + "district_no=" + district_no;
 	url = url + "&method=" + method;
@@ -69,10 +66,10 @@ function buy() {
 		$.post("/ticket/", { cinema_id: cinema_id, movie_id: movie_id, show_date: show_date, show_time: show_time, room_no: room_no, price: price, seatx: seatx, seaty: seaty }, function (result) {
 			console.log(result.info);
 			if (result.info == "success") {
-				var content = "<div class=\"alert alert-success\" role=\"alert\">" + seaty + "排" + seatx + "号：" + "<Strong> 购票成功！！</strong></div> "
+				var content = "<div class=\"alert alert-success\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票成功！！</strong></div> "
 				$(".modal-body").append(content);
 			} else {
-				var content = "<div class=\"alert alert-danger\" role=\"alert\">" + seaty + "排" + seatx + "号：" + "<Strong> 购票失败！！</strong></div> "
+				var content = "<div class=\"alert alert-danger\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票失败！！</strong></div> "
 				$(".modal-body").append(content);
 			}
 
