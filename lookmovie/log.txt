@@ -1,1 +1,1 @@
-only a single result allowed for a SELECT that is part of an expression
+UNIQUE constraint failed: sellTickets.seatx, sellTickets.seaty, sellTickets.show_date, sellTickets.show_time, sellTickets.room_no

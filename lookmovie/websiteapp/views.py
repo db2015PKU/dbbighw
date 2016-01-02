@@ -434,7 +434,7 @@ def hall(request,room_no,show_date,show_time):#tested
     
     dbRes=sqlRead(sql)
     for row in dbRes:
-        data[row[0]][row[1]]='u'
+        data[row[0]-1][row[1]-1]='u'
     
 
     #最终data形式 ： ['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa']

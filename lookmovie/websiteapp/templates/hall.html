@@ -105,17 +105,25 @@
 			{% for item in seatmap %}
 			mapset.push("{{item}}");
 			{% endfor %}
+			
 			console.log(mapset);
 			var sc = $('#seat-map').seatCharts({
-				map: mapset,
+				map: [
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa',
+				'aaaaaaaaaa'
+				],
 				seats: {
 					a: {
 						price: {{price}},
-						classes: 'normal-seat available'
-					},
-					b: {
-						price: {{price}},
-						classes: 'normal-seat unavailable'
+						classes: 'normal-seat'
 					}
 				},
 				click: function(){
@@ -156,6 +164,16 @@
 					]
 				}
 			});
+			for (var i = 0; i < 10; i++){
+				for (var j = 0; j < 10; j++){
+					//console.log("i = " + i + ", j = " + j + " ," + mapset[i].charAt(j));
+					if (mapset[i].charAt(j) == 'u'){
+						var id = "" + (i+1) + "_" + (j+1);
+						console.log(id);
+						sc.status(id, 'unavailable');
+					}
+				}
+			}
 		});
 	</script>
 </body>

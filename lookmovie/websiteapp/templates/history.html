@@ -48,13 +48,12 @@
             <div class="ticketEntry col-md-offset-2 col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><a href="/hall/">{{ item.cinema_name }}</a>-{{ item.movie_name }}</h3>
+                        <h3 class="panel-title"><a href="{{item.url}}">{{ item.cinema_name }}</a>-{{ item.movie_name }}</h3>
                     </div>
                     <div class="panel-body">
                         <p>放映厅： {{ item.room_no }}</p>
                         <hr style="margin-top: 10px; margin-bottom: 10px" />
                         <p style="margin-bottom: 0px">
-                            {{item}}
                             座位信息： {% for seat in item.seats %} {{seat.y}}排{{seat.x}}座 {% endfor %}
                         </p>
                     </div>

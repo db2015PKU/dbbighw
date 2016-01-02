@@ -58,8 +58,8 @@ function buy() {
 	var allseat = $(".seatCharts-seat.selected");
 	for (var i = 0; i < allseat.length; i++) {
 		var tmp = allseat[i].id.split("_");
-		var seatx = tmp[0];
-		var seaty = tmp[1];
+		var seaty = tmp[0];
+		var seatx = tmp[1];
 		console.log("seatx: " + seatx);
 		console.log("seaty: " + seaty);
 		$(".modal-body").html("");
@@ -124,7 +124,7 @@ function getCinemaXML(url) {
 		var phone = $(xml).find("Phone").text();
 		var businessHours = $(xml).find("BusinessHours").text();
 		var estimate = $(xml).find("Estimate").text();
-		$("#estimate").html("评分： " + estimate);
+		$("#cinema_name").html(cinema_name + " <small>评分： "+ estimate+"</small></h1>")
 		$("#phone").html("联系方式： " + phone);
 		$("#time").html("营业时间： " + businessHours);
 		$("#location").html("地址： " + district + "，" + road + "，" + busStation);
