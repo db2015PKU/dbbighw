@@ -41,6 +41,7 @@ def sqlWrite(sql_str):
     except Exception as e:
         with open('log.txt','w') as f:
             f.write(str(e))
+            print (e)
         return False
 
 def login(request):#拿到正确返回值后前端似乎应该自己再重定向到首页？
@@ -377,15 +378,19 @@ def search_movie_total(request): #tested
 
 def ticket(request):#complete but without test
     user_id=request.session['user_id']
-    cinema_id=request.POST['cinema_id']
-    movie_id=request.POST['movie_id']
-    show_date=request.POST['show_date']
-    show_time=request.POST['show_time']
-    room_no=request.POST['room_no']
-    seatx=request.POST['seatx']
-    seaty=request.POST['seaty']
-    price=request.POST['price']
-    sql='''insert into sellTickets user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price values ('%s',%s,%s,'%s','%s',%s,%s,%s,%s)''' % (user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price)
+    #with open('POST.txt','w') as f:
+        #f.write(str(request.POST['cinema_id']))
+    cinema_id=request.GET['cinema_id']
+    movie_id=request.GET['movie_id']
+    show_date=request.GET['show_date']
+    show_time=request.GET['show_time']
+    room_no=request.GET['room_no']
+    seatx=request.GET['seatx']
+    seaty=request.GET['seaty']
+    price=request.GET['price']
+    sql='''insert into sellTickets (user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price) values ('%s','%s','%s','%s','%s','%s','%s','%s','%s')''' % (user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price)
+    with open('POST.txt','w') as f:
+        f.write(sql)
     if(sqlWrite(sql)):
         result={
         "info":"success",
@@ -400,10 +405,7 @@ def ticket(request):#complete but without test
         }
 
 
-    #等触发器
-    result={
-        "info":"success"
-    }
+    
     return HttpResponse(json.dumps(result), content_type="application/json")
 
 
@@ -752,7 +754,7 @@ insert into movieShow values ('5', '2', '2015-12-20', '20:00:00', '22','56');
  drop table if exists sellTickets;
 CREATE TABLE sellTickets (
     ticket_id INTEGER PRIMARY KEY,
-    user_id varchar(40),
+    user_id INTEGER,
     cinema_id INT(10) not NULL,
     movie_id INT(30) NOT NULL,
     show_date DATE NOT NULL,
@@ -765,41 +767,40 @@ CREATE TABLE sellTickets (
     
     unique(seatx,seaty,show_date,show_time,room_no)
 );
-
+drop trigger if exists seat_check1;
+drop trigger if exists seat_check2;
 create trigger seat_check1 before insert on sellTickets
     for each row
     begin
     select raise(rollback, '选座失败')
     where exists(select cinema_id, movie_id, show_date, show_time, room_no
                  from sellTickets
-                 where cinema_id = new.cinema_id and movie_id = new.movie.id and show_date = new.show_date and show_time = new.show_time and room_no = new.room_no)
+                 where cinema_id = new.cinema_id and movie_id = new.movie_id and show_date = new.show_date and show_time = new.show_time and room_no = new.room_no)
     and new.seatx > 2
     and exists(select seatx, seaty
          from sellTickets
-         where seatx = new.seatx - 2 and seaty = new.seaty)
-    and (select seatx, seaty
+         where seatx = new.seatx - 2 and seaty = new.seaty limit 1)
+    and not exists(select seatx, seaty
          from sellTickets
-         where seatx = new.seatx - 1 and seaty = new.seaty) is null;
+         where seatx = new.seatx - 1 and seaty = new.seaty limit 1);
     
     end;
-    
 create trigger seat_check2 before insert on sellTickets
     for each row
     begin
     select raise(rollback, '选座失败')
     where exists(select cinema_id, movie_id, show_date, show_time, room_no
                  from sellTickets
-                 where cinema_id = new.cinema_id and movie_id = new.movie.id and show_date = new.show_date and show_time = new.show_time and room_no = new.room_no)
+                 where cinema_id = new.cinema_id and movie_id = new.movie_id and show_date = new.show_date and show_time = new.show_time and room_no = new.room_no)
     and new.seatx < 9
     and exists(select seatx, seaty
          from sellTickets
          where seatx = new.seatx + 2 and seaty = new.seaty)
-    and (select seatx, seaty
+    and not exists(select seatx, seaty
          from sellTickets
-         where seatx = new.seatx + 1 and seaty = new.seaty) is null;
+         where seatx = new.seatx + 1 and seaty = new.seaty);
     
     end;
-
 
 
     

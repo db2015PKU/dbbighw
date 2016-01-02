@@ -1,0 +1,1 @@
+insert into sellTickets (user_id,cinema_id,movie_id,show_date,show_time,room_no,seatx,seaty,price) values ('1','1','1','2015-12-10','20:00:00','1','2','2','40')

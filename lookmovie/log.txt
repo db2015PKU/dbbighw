@@ -1,1 +1,1 @@
-near "user_id": syntax error
+only a single result allowed for a SELECT that is part of an expression
