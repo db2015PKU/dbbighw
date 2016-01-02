@@ -66,7 +66,7 @@ def login(request):#拿到正确返回值后前端似乎应该自己再重定向
                 request.session['logined']=False
         else:
             request.session['logined']=False
-       
+        print dbRes
         return HttpResponseRedirect("/")
 
 def sign(request):#前端的值似乎没传好，user_email这个字段获取不到
@@ -97,7 +97,7 @@ def exit(request):#tested
     return render(request, 'signup.html')
 
 def user_ticket_history(request):#complete但没有数据可以测试
-    sql='''select cinema_name,movie_name,room_no,sellTickets.show_date,sellTickets.show_time from (sellTickets left outer join cinema on sellTickets.cinema_id = cinema.cinema_id) left outer join movie on sellTickets.movie_id = movie.movie_id where user_id = %s''' % request.session['user_id']
+    sql='''select cinema_name,movie_name,room_no,sellTickets.show_date,sellTickets.show_time,sellTickets.cinema_id from (sellTickets left outer join cinema on sellTickets.cinema_id = cinema.cinema_id) left outer join movie on sellTickets.movie_id = movie.movie_id where user_id = %s''' % request.session['user_id']
     dbRes=sqlRead(sql)
     data=[
         {
@@ -106,12 +106,13 @@ def user_ticket_history(request):#complete但没有数据可以测试
             "room_no":x[2],
             "show_date":x[3],
             "show_time":x[4],
+            "url":'/cinema/'+str(x[5])
             
         }
         for x in dbRes
     ]
     for row in data:
-        sql='''select seatx,seaty from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (row['room_no'],row['show_date'],row['show_time'])
+        sql='''select seatx,seaty from sellTickets where room_no = %s and show_date = '%s' and show_time = '%s' and user_id = %s''' % (row['room_no'],row['show_date'],row['show_time'],request.session['user_id'])
         dbRes=sqlRead(sql)
         row['seats']=[{'x':x[0],'y':x[1]} for x in dbRes]
     '''返回示例
@@ -258,7 +259,7 @@ def search_cinema_by_district(request):#3种按行政区搜索电影院
                 sql='''select seatx_max,seaty_max from room where room_no = %s''' % room_no
                 roomRes=sqlRead(sql)
                 availableTotal+=int(roomRes[0][0])*int(roomRes[0][1])
-                sql='''select count(*) from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (room_no,show_date,show_time)
+                sql='''select count(*) from sellTickets where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
                 countRes=sqlRead(sql)
                 availableTotal-=countRes[0][0]
             row["seatsAvailTotal"]=availableTotal
@@ -324,7 +325,7 @@ def search_cinema_by_movie(request):#返回的字典数值tested，render未测�
         sql='''select seatx_max,seaty_max from room where room_no = %s''' % row['room_no']
         dbRes=sqlRead(sql)
         availableTotal=int(dbRes[0][0])*int(dbRes[0][1])
-        sql='''select count(*) from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (row['room_no'],row['show_date'],row['show_time'])
+        sql='''select count(*) from sellTickets where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (row['room_no'],row['show_date'],row['show_time'])
         countRes=sqlRead(sql)
         availableTotal-=countRes[0][0]
         row["availableTotal"]=availableTotal
@@ -365,7 +366,7 @@ def search_movie_total(request): #tested
             sql='''select seatx_max,seaty_max from room where room_no = %s''' % room_no
             roomRes=sqlRead(sql)
             total+=int(roomRes[0][0])*int(roomRes[0][1])
-            sql='''select count(*) from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (room_no,show_date,show_time)
+            sql='''select count(*) from sellTickets where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
             soldRes=sqlRead(sql)
             sold+=soldRes[0][0]
         row['sold_rate']=float(sold)/total
@@ -429,14 +430,18 @@ def hall(request,room_no,show_date,show_time):#tested
     maxX=dbRes[0][0]
     maxY=dbRes[0][1]
     data=[['a' for col in range(maxX)] for row in range(maxY)]
-    sql='''select seaty,seatx from sellTickets where room_no = %s and show_date = %s and show_time = '%s' ''' % (room_no,show_date,show_time)
+    sql='''select seaty,seatx from sellTickets where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
+    
     dbRes=sqlRead(sql)
     for row in dbRes:
         data[row[0]][row[1]]='u'
+    
 
     #最终data形式 ： ['aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa', 'aaaaaaaaaa']
     for index,i in enumerate(data):
         data[index]=''.join(i)
+    with open('testlog.txt','w') as f:
+        f.write(str(data))
 
     sql='''select price,cinema_id,movie_id from movieShow where room_no = %s and show_date = '%s' and show_time = '%s' ''' % (room_no,show_date,show_time)
     dbRes=sqlRead(sql)

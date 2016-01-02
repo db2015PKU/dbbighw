@@ -63,17 +63,37 @@ function buy() {
 		console.log("seatx: " + seatx);
 		console.log("seaty: " + seaty);
 		$(".modal-body").html("");
-		$.post("/ticket/", { cinema_id: cinema_id, movie_id: movie_id, show_date: show_date, show_time: show_time, room_no: room_no, price: price, seatx: seatx, seaty: seaty }, function (result) {
+		var url = "/ticket/?";
+		url = url + "cinema_id=" + cinema_id;
+		url = url + "&movie_id=" + movie_id;
+		url = url + "&show_date=" + show_date;
+		url = url + "&show_time=" + show_time;
+		url = url + "&room_no=" + room_no;
+		url = url + "&price=" + price;
+		url = url + "&seatx=" + seatx;
+		url = url + "&seaty=" + seaty;
+		$.get(url, function(result){
 			console.log(result.info);
 			if (result.info == "success") {
-				var content = "<div class=\"alert alert-success\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票成功！！</strong></div> "
+				var content = "<div class=\"alert alert-success\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票成功！！</strong></div> ";
 				$(".modal-body").append(content);
 			} else {
-				var content = "<div class=\"alert alert-danger\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票失败！！</strong></div> "
+				var content = "<div class=\"alert alert-danger\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票失败！！</strong></div> ";
 				$(".modal-body").append(content);
 			}
-
 		});
+		// $.post("/ticket/", { cinema_id: cinema_id, movie_id: movie_id, show_date: show_date, show_time: show_time, room_no: room_no, price: price, seatx: seatx, seaty: seaty }, function (result) {
+		// 	console.log(result.info);
+		// 	if (result.info == "success") {
+		// 		var content = "<div class=\"alert alert-success\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票成功！！</strong></div> "
+		// 		$(".modal-body").append(content);
+		// 	} else {
+		// 		var content = "<div class=\"alert alert-danger\" role=\"alert\">" + result.seaty + "排" + result.seatx + "号：" + "<Strong> 购票失败！！</strong></div> "
+		// 		$(".modal-body").append(content);
+		// 	}
+			
+		// });
+				 
 	}
 	$("#buy").html("确定");
 	$("#close").hide();

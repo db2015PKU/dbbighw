@@ -110,8 +110,12 @@
 				map: mapset,
 				seats: {
 					a: {
-						price: 50,
-						classes: 'normal-seat'
+						price: {{price}},
+						classes: 'normal-seat available'
+					},
+					b: {
+						price: {{price}},
+						classes: 'normal-seat unavailable'
 					}
 				},
 				click: function(){

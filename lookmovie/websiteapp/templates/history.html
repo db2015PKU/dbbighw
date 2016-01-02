@@ -54,6 +54,7 @@
                         <p>放映厅： {{ item.room_no }}</p>
                         <hr style="margin-top: 10px; margin-bottom: 10px" />
                         <p style="margin-bottom: 0px">
+                            {{item}}
                             座位信息： {% for seat in item.seats %} {{seat.y}}排{{seat.x}}座 {% endfor %}
                         </p>
                     </div>
